@@ -1,5 +1,9 @@
 "use client"
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ExternalLink, TrendingUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const RightSideBar = () => {
     const [showAllsponsors,setShowAllsponsors] = useState(false)
@@ -36,11 +40,63 @@ const RightSideBar = () => {
       website: "https://www.apple.com",
     },
   ];
+  const displaySponsors = showAllsponsors ? sponsors : sponsors.slice(0,3)
   return (
-    <div>
-      
-    </div>
+    <motion.aside
+    initial={{ opacity: 0, x: 50 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.5 }}
+    className='space-y-4'
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex text-lg font-semibold items-center">
+            <TrendingUp className='mr-2 h-6 w-6 text-primary'/> Popular Sponsors
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className='space-y-4'>
+            {displaySponsors.map((sponsor, index) => (
+              <motion.li
+                key={sponsor.name}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className='flex flex-col items-center space-x-4 p-2 rounded-lg hover:bg-gray-100 hover:dark:bg-gray-800 translate-colors duration-200'
+              >
+                <img
+                  src={sponsor.image}
+                  alt={sponsor.name}
+                  className='w-50 h-40 object-contain rounded-md'
+                />
+                <div className='flex-1'>
+                  <h3 className='text-md font-semibold text-primary'>{sponsor.name}</h3>
+                  <p className='text-sm text-gray-600 dark:text-gray-400'>{sponsor.description}</p>
+                  <a 
+                    href={sponsor.website}
+                    target='_blank'
+                    rel="noopener noreferrer"
+                    className='flex flex-row text-primary text-sm items-center mt-1 hover:underline'
+                  >
+                    Visit Website <ExternalLink className='ml-1 h-4 w-4'/>
+                  </a>          
+                </div>
+              </motion.li>
+            ))}
+          </ul>
+          {sponsors.length > 3 &&(
+            <Button
+            variant='outline'
+            className='w-full mt-4'
+            onClick={()=>setShowAllsponsors(!showAllsponsors)}
+            >
+              {showAllsponsors ? "Show less" : "Show more"}
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    </motion.aside> 
   )
 }
 
-export default RightSideBar
+export default RightSideBar 
