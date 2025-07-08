@@ -15,13 +15,57 @@ const HomePage = () => {
       id:1,
       content: "Facebook Clone",
       mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
-      mediaType: "video"
+      mediaType: "video",
+      user: {
+        username: "Mai Huynh Duong Tuan Kiet",
+        avatarUrl: "...",
+      },
+      comments: [
+        {
+          user: {
+            username: "Mai Huynh Duong Tuan Kiet",
+            avatarUrl: "...",
+          },
+          text: "Hello",
+          createdAt: "1h ago",
+        },
+        {
+          user: {
+            username: "Mai Tuan Kiet",
+            avatarUrl: "...",
+          },
+          text: "Good morning",
+          createdAt: "4h ago",
+        },
+      ],
     },
     {
       id:2,
       content: "Nui ",
       mediaUrl: "https://images.unsplash.com/photo-1751420860835-68256ba0f82a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzNHx8fGVufDB8fHx8fA%3D%3D",
-      mediaType: "image"   
+      mediaType: "image",
+      user: {
+        username: "Duong Tuan Kiet",
+        avatarUrl: "...",
+      },
+      comments: [
+        {
+          user: {
+            username: "Mai Huynh Duong Tuan Kiet",
+            avatarUrl: "...",
+          },
+          text: "Here we go",
+          createdAt: "3 day ago",
+        },
+        {
+          user: {
+            username: "Tuan Kiet",
+            avatarUrl: "...",
+          },
+          text: "Good morning",
+          createdAt: "4h ago",
+        },
+      ],   
     }
   ]
 

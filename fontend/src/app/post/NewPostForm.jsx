@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { FileType, ImageIcon, Laugh, Plus, Video, X } from "lucide-react";
+import { ImageIcon, Laugh, Plus, Video, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
@@ -30,7 +30,7 @@ const NewPostForm = ({ isPostFormOpen, setIsPostFormOpen }) => {
 
   return (
     <Card>
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex space-x-4">
           <Avatar className='w-10 h-10'>
             <AvatarImage />
@@ -38,7 +38,7 @@ const NewPostForm = ({ isPostFormOpen, setIsPostFormOpen }) => {
           </Avatar>
 
           <Dialog open={isPostFormOpen} onOpenChange={setIsPostFormOpen}>
-            <DialogTrigger className="w-full">
+            <DialogTrigger  className="w-full">
               <Input
                 placeholder="What's on your mind?, Mai Huynh Duong Tuan Kiet"
                 readOnly

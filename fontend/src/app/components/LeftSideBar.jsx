@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useSidebarStore from "@/store/sidebarStore";
 import { Bell, Home, MessageCircle, User, User2, User2Icon, Video } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from 'react'
 
 const LeftSideBar = () => {
     const {isSidebarOpen,toggleSidebar} = useSidebarStore()
+    const router = useRouter()
+    const handleNavigation = (path,item) => {
+        router.push(path)
+  };
 return (
     <aside className={`fixed top-16 left-0 h-full w-64 p-4 transform transition-transform duration-200 ease-in-out md:translate-x-0 flex flex-col z-50 md:z-0 ${isSidebarOpen ? "translate-x-0 bg-gray-100 dark:bg-gray-800 shadow-lg" : "-translate-x-full"} ${isSidebarOpen ? "md:hidden" : ""} md:bg-transparent md:shadow-none`}>
         <div className="flex flex-col h-full overflow-y-auto">
@@ -22,7 +27,8 @@ return (
                 </div>
                     <Button
                         variant="ghost"
-                        className="w-full justify-start py-3 px-2"
+                        className="w-full justify-start py-3 px-2 hover:bg-gray-200"
+                        onClick={() => handleNavigation("/")}
                     >
                         <Home className="mr-4" />
                         Home
@@ -30,7 +36,8 @@ return (
 
                     <Button
                         variant="ghost"
-                        className="w-full justify-start py-3 px-2"
+                        className="w-full justify-start py-3 px-2 hover:bg-gray-200"
+                        onClick={() => handleNavigation("/friends-list")}
                     >
                         <User2Icon className="mr-4" />
                         Friends
@@ -38,7 +45,8 @@ return (
 
                     <Button
                         variant="ghost"
-                        className="w-full justify-start py-3 px-2"
+                        className="w-full justify-start py-3 px-2 hover:bg-gray-200"
+                        onClick={() => handleNavigation("/video-feed")}
                     >
                         <Video className="mr-4" />
                         Video
@@ -46,7 +54,8 @@ return (
 
                     <Button
                         variant="ghost"
-                        className="w-full justify-start py-3 px-2"
+                        className="w-full justify-start py-3 px-2 hover:bg-gray-200"
+                        onClick={() => handleNavigation(`user-profile`)}
                     >
                         <User className="mr-4" />
                         Profile
@@ -54,7 +63,8 @@ return (
 
                     <Button
                         variant="ghost"
-                        className="w-full justify-start py-3 px-2"
+                        className="w-full justify-start py-3 px-2 hover:bg-gray-200"
+                        onClick={() => handleNavigation("/message")}
                     >
                         <MessageCircle className="mr-4" />
                         Message
@@ -62,7 +72,8 @@ return (
 
                     <Button
                         variant="ghost"
-                        className="w-full justify-start py-3 px-2"
+                        className="w-full justify-start py-3 px-2 hover:bg-gray-200"
+                        onClick={() => handleNavigation("/notification")}
                     >
                         <Bell className="mr-4" />
                         Notification
