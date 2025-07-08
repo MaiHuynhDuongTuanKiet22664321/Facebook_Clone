@@ -32,7 +32,7 @@ const NewPostForm = ({ isPostFormOpen, setIsPostFormOpen }) => {
     <Card>
       <CardContent className="p-4">
         <div className="flex space-x-4">
-          <Avatar>
+          <Avatar className='w-10 h-10'>
             <AvatarImage />
             <AvatarFallback className="dark:bg-gray-400">A</AvatarFallback>
           </Avatar>
