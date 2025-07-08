@@ -3,6 +3,8 @@ import {Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useSidebar } from "@/components/ui/sidebar";
+import useSidebarStore from "@/store/sidebarStore";
 import { Search, Home, Video, User, Menu, Bell, MessageCircle, Users, LogOutIcon, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -12,6 +14,7 @@ import React, { useState } from "react";
 const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const {theme,setTheme} = useTheme(false)
+  const {toggleSidebar} = useSidebarStore()
   return (
     <header className="bg-white dark:bg-[rgb(36,37,38)] text-foreground shadow-md h-16 fixed top-0 left-0 right-0 z-50 p-2">
       <div className="mx-auto flex justify-between items-center p-2">
@@ -71,7 +74,8 @@ const Header = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden text-gray-600 cursor-pointer"
+            className="md:hidden text-gray-800 dark:text-gray-100 cursor-pointer"
+            onClick={() => toggleSidebar()}
           >
             <Menu />
           </Button>

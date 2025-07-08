@@ -1,10 +1,16 @@
 import React from 'react'
+import { motion } from 'framer-motion'
 
-const PostCard = () => {
+const PostCard = ({post}) => {
   return (
-    <div>
-      
-    </div>
+    <>
+      <motion.div
+      key={post?.id}
+      initial
+      >
+
+      </motion.div>
+    </>
   )
 }
 

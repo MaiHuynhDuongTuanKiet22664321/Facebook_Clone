@@ -6,68 +6,64 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+const CARD_WIDTH = 140; // width of each story card
+const GAP = 12; // Tailwind gap-3 ~ 0.75rem = 12px
+
 const StorySection = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef(null);
+
   const storyPosts = React.useMemo(() => [
     {
       _id: 1,
       mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
       mediaType: "video",
-      user: {
-        username: "Mai Huynh Duong Tuan Kiet",
-      },
+      user: { username: "Mai Huynh Duong Tuan Kiet" },
     },
     {
       _id: 2,
       mediaUrl: "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d",
       mediaType: "image",
-      user: {
-        username: "Nguyen Van A",
-      },
+      user: { username: "Nguyen Van A" },
     },
     {
       _id: 3,
       mediaUrl: "https://www.w3schools.com/html/movie.mp4",
       mediaType: "video",
-      user: {
-        username: "Tran Thi B",
-      },
+      user: { username: "Tran Thi B" },
     },
     {
       _id: 4,
       mediaUrl: "https://images.unsplash.com/photo-1541963463532-d68292c34b19",
       mediaType: "image",
-      user: {
-        username: "Le Hoang C",
-      },
+      user: { username: "Le Hoang C" },
     },
     {
       _id: 5,
       mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
       mediaType: "video",
-      user: {
-        username: "Pham Van D",
-      },
+      user: { username: "Pham Van D" },
     },
   ], []);
 
-  useEffect(() => {
+  const updateScrollInfo = () => {
     const container = containerRef.current;
     if (container) {
-      const updateDimensions = () => {
-        setContainerWidth(container.offsetWidth);
-        setMaxScroll(container.scrollWidth - container.offsetWidth);
-        setScrollPosition(container.scrollLeft);
-      };
-
-      updateDimensions();
-      window.addEventListener("resize", updateDimensions);
-      return () => window.removeEventListener("resize", updateDimensions);
+      setContainerWidth(container.offsetWidth);
+      setScrollPosition(container.scrollLeft);
+      setMaxScroll(container.scrollWidth - container.offsetWidth);
     }
+  };
+
+  useEffect(() => {
+    updateScrollInfo();
+    window.addEventListener("resize", updateScrollInfo);
+    return () => window.removeEventListener("resize", updateScrollInfo);
   }, [storyPosts]);
+
+  const handleScroll = () => updateScrollInfo();
 
   const scroll = (direction) => {
     const container = containerRef.current;
@@ -77,57 +73,49 @@ const StorySection = () => {
     }
   };
 
-  const handleScroll = () => {
-    const container = containerRef.current;
-    if (container) {
-      setScrollPosition(container.scrollLeft);
-    }
-  };
+  // Tính khoảng kéo giới hạn trái
+  const totalCards = storyPosts.length + 1; // +1 for AddStory
+  const totalContentWidth = totalCards * CARD_WIDTH + (totalCards - 1) * GAP;
+  const dragLimitLeft = Math.min(0, containerWidth - totalContentWidth);
 
   return (
-    <div className="relative">
-      {/* Scroll container */}
+    <div className="relative pb-2">
+      {/* Scrollable container */}
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex space-x-2 overflow-x-auto scrollbar-hide py-4 px-2"
+        className="flex overflow-x-auto scrollbar-hide py-4 px-2"
       >
         <motion.div
-          className="flex space-x-2"
+          className="flex gap-3"
           drag="x"
-          dragConstraints={{
-            right: 0,
-            left: -((storyPosts.length + 1) * 160 - containerWidth),
-          }}
+          dragConstraints={{ right: 0, left: dragLimitLeft }}
         >
-          {/* Thẻ Tạo tin */}
           <StoryCard isAddStory={true} />
-
-          {/* Các story có thật */}
-          {storyPosts?.map((story) => (
-            <StoryCard story={story} key={story._id} />
+          {storyPosts.map((story) => (
+            <StoryCard key={story._id} story={story} />
           ))}
         </motion.div>
       </div>
 
-      {/* Nút cuộn trái */}
+      {/* Left Scroll Button */}
       {scrollPosition > 0 && (
         <Button
           variant="outline"
           size="icon"
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full shadow-lg z-10"
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full shadow z-10"
           onClick={() => scroll("left")}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
       )}
 
-      {/* Nút cuộn phải */}
-      {scrollPosition < maxScroll && (
+      {/* Right Scroll Button */}
+      {scrollPosition < maxScroll - 10 && (
         <Button
           variant="outline"
           size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full shadow-lg z-10"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full shadow z-10"
           onClick={() => scroll("right")}
         >
           <ChevronRight className="h-4 w-4" />

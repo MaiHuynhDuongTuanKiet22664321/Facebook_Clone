@@ -9,7 +9,7 @@ const StoryCard = ({ isAddStory, story }) => {
 
     return (
         <Card
-            className=" p-0 w-40 h-60 relative overflow-hidden group cursor-pointer rounded-2xl bg-[#1b1b22] border-none"
+            className=" p-0 w-[140px] h-[220px] shadow-sm relative overflow-hidden group cursor-pointer rounded-2xl bg-[#1b1b22] border-none"
             onClick={isAddStory ? undefined : handleStoryClick}
         >
             <CardContent className="p-0 h-full flex flex-col">
