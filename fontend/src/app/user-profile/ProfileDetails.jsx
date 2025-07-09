@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import PostsContent from './profileContent/PostsContent' // sửa đúng tên file
@@ -5,6 +6,7 @@ import { Briefcase, Cake, GraduationCap, Heart, Heater, Home, Mail, MapPin, Phon
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import MutualFriends from './profileContent/MutualFriends'
+import EditBio from './profileContent/EditBio'
 
 const ProfileDetails = ({ activeTab }) => {
     const [isEditBioModel, setIsEditBioModel] = useState(false);
@@ -216,7 +218,15 @@ const ProfileDetails = ({ activeTab }) => {
     ),
   }
 
-  return <div>{tabContent[activeTab] || null}</div>
+  return (
+  <>
+    {tabContent[activeTab] || null}
+    <EditBio
+    isOpen={isEditBioModel}
+    onClose={() => setIsEditBioModel(false)}
+    />
+  </>
+  )
 }
 
 export default ProfileDetails
