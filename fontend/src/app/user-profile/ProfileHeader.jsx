@@ -22,14 +22,14 @@ const ProfileHeader = () => {
   return (
     <div className="relative">
       {/* Cover Section */}
-      <div className="relative h-64 md:h-80 bg-gray-300 overflow-hidden">
+      <div className="relative h-64 md:h-80 bg-gray-300 ">
         <img
           src="/fontend/public/images/logoFB.png"
           alt="cover"
           className="w-full h-full object-cover"
         />
         <Button
-          className="absolute bottom-4 right-4 flex items-center"
+          className="absolute bottom-4 right-4 z-50 flex items-center"
           variant="secondary"
           size="sm"
           onClick={() => setIsEditCoverModal(true)}
@@ -102,6 +102,13 @@ const ProfileHeader = () => {
                   Select New Cover Photo
                 </Button>
               </div>
+              <Button
+                type="submit"
+                className="w-full bg-blue-500 hover:bg-blue-600"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save Cover Photo
+              </Button>
             </motion.div>
           </motion.div>
         )}
@@ -136,12 +143,16 @@ const ProfileHeader = () => {
                 </button>
               </div>
               <form className="space-y-4">
+                <div className="flex flex-col md:flex-row items-center md:items-end md:space-x-5">
+                  <Avatar className="w-30 h-30 border-4 border-gray-200 dark:border-gray-500">
+                    <AvatarImage />
+                    <AvatarFallback className="dark:bg-gray-400">
+                      A
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
                 <div className="flex flex-col items-center mb-4">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                  />
+                  <input type="file" accept="image/*" className="hidden" />
                   <Button type="button" variant="outline" size="sm">
                     <Upload className="w-4 h-4 mr-2" />
                     Change Profile Photo

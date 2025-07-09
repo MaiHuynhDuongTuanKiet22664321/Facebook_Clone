@@ -80,7 +80,7 @@ const HomePage = () => {
             isPostFormOpen={isPostFormOpen}
             setIsPostFormOpen={setIsPostFormOpen}
           />
-          <div className='mt-6 space-y-6'>
+          <div className='mt-6 space-y-6 mb-4'>
             {posts.map((post, index) => (
               <PostCard
                 key={index}
