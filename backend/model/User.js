@@ -1,0 +1,54 @@
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+    namename: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        // required: true,
+        default:null,
+    },
+    gender: {
+        type: string,
+        default: null,
+    },
+    dateOfBirth:{
+        type: Date,
+        default: null
+    },
+    profilePicture: {
+        type: String,
+        default: null,
+    },
+    coverPhoto: {
+        type: String,
+        default: null,
+    },
+    followers: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    },
+    following: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    },
+    followerCount:{
+        type: Number,
+        default: 0
+    },
+    followingCount:{
+        type: Number,
+        default: 0
+    },
+    
+},{timestamps: true});
+
+const User = mongoose.model("User", userSchema);
+module.exports = User;
