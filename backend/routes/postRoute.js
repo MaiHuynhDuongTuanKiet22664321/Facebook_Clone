@@ -8,16 +8,13 @@ const {
   getPostByUserId,
   likePost,
   sharePost,
-  addCommentToPost
+  addCommentToPost,
+  createStory,
+  getAllStory
 } = require("../controllers/postController");
 
 // create post
-router.post(
-  "/posts",
-  authMiddleware,
-  multerMiddleware.single("media"),
-  createPost
-);
+router.post("/posts",authMiddleware,multerMiddleware.single("media"),createPost);
 
 // get all post
 router.get("/posts", authMiddleware, getAllPosts);
@@ -33,5 +30,12 @@ router.post("/posts/comments/:postId", authMiddleware, addCommentToPost);
 
 // user share post route
 router.post("/posts/share/:postId", authMiddleware, sharePost);
+
+
+// create story
+router.post("/story",authMiddleware,multerMiddleware.single("media"),createStory);
+
+// get all story
+router.get("/story", authMiddleware, getAllStory);
 
 module.exports = router;

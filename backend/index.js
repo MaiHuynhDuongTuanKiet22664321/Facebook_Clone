@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 require("dotenv").config();
 const authRoute = require("./routes/authRoute");
 const postRoute = require("./routes/postRoute");
+const userRoute = require("./routes/userRoute");
 
 const app = express();
 app.use(express.json());
@@ -17,7 +18,8 @@ connectDB();
 
 // api route
 app.use("/auth", authRoute);
-app.use('/users',postRoute)
+app.use('/users',postRoute);
+app.use('/users',userRoute);
 
 
 

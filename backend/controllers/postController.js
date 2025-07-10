@@ -1,8 +1,9 @@
 const { response } = require("../utils/responseHandler");
 const { uploadFileToCloudinary } = require("../config/cloudinary");
 const Post = require("../model/Post");
+const Story = require("../model/story");
 
-const createPost = async (req, res) => {
+async function createPost(req, res) {
   try {
     const userId = req.user.userId;
     console.log("This is user id", userId);
@@ -36,7 +37,58 @@ const createPost = async (req, res) => {
     console.log("error in creating post", error);
     return response(res, 500, "Internal server error", error.message);
   }
+}
+
+
+// create story
+const createStory = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const file = req.file;
+
+    if(!file) {
+      return response(res, 400, "No file uploaded");
+    }
+    let mediaUrl = null;
+    let mediaType = null;
+
+    if (file) {
+      const uploadResult = await uploadFileToCloudinary(file);
+      console.log("Upload file", uploadResult);
+      mediaUrl = uploadResult?.secure_url;
+      mediaType = file.mimetype.startsWith("video") ? "video" : "image";
+    }
+
+    // Create a new Story
+    const newStory = await new Story({
+      user: userId,
+      mediaUrl,
+      mediaType,
+    });
+    await newStory.save();
+    return response(res, 201, "Story created successfully", newStory);
+  } catch (error) {
+    console.log("error in creating story", error);
+    return response(res, 500, "Internal server error", error.message);
+  }
 };
+
+//get all Story
+const getAllStory = async (req, res) => {
+  try {
+    const story = await Story.find()
+      .sort({ createdAt: -1 })
+      .populate("user", "_id username profilePicture email")
+
+    return response(res, 200, "Get all story successfully", story);
+
+    return response(res, 200, "All posts", posts);
+  } catch (error) {
+    console.log("error in getting all story", error);
+    return response(res, 500, "Internal server error", error.message);
+  }
+};
+
 
 // get all post
 const getAllPosts = async (req, res) => {
@@ -179,5 +231,7 @@ module.exports = {
     getPostByUserId, 
     likePost,
     addCommentToPost,
-    sharePost
+    sharePost,
+    getAllStory,
+    createStory,
 };

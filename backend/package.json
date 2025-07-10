@@ -17,12 +17,15 @@
     "cors": "^2.8.5",
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.2",
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-google-oauth2": "^0.2.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
