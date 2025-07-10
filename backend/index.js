@@ -4,6 +4,8 @@ const cors = require("cors");
 const { connect } = require("mongoose");
 const connectDB = require("./config/db");
 require("dotenv").config();
+const authRoute = require("./routes/authRoute");
+const postRoute = require("./routes/postRoute");
 
 const app = express();
 app.use(express.json());
@@ -13,6 +15,9 @@ app.use(cookieParser());
 
 connectDB();
 
+// api route
+app.use("/auth", authRoute);
+app.use('/users',postRoute)
 
 
 

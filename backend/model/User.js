@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    namename: {
+    username: {
         type: String,
         required: true,
     },
@@ -12,16 +12,15 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        // required: true,
-        default:null,
-    },
-    gender: {
-        type: string,
         default: null,
     },
-    dateOfBirth:{
+    gender: {
+        type: String,
+        default: null,
+    },
+    dateOfBirth: {
         type: Date,
-        default: null
+        default: null,
     },
     profilePicture: {
         type: String,
@@ -31,24 +30,25 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
-    followers: {
+    followers: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref:'User'
-    },
-    following: {
+        ref: 'User',
+    }],
+    following: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref:'User'
-    },
-    followerCount:{
+        ref: 'User',
+    }],
+    followerCount: {
         type: Number,
-        default: 0
+        default: 0,
     },
-    followingCount:{
+    followingCount: {
         type: Number,
-        default: 0
+        default: 0,
     },
-    
-},{timestamps: true});
+}, { timestamps: true });
+
+userSchema.index({ email: 1 });
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
