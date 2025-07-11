@@ -3,6 +3,7 @@ const { uploadFileToCloudinary } = require("../config/cloudinary");
 const Post = require("../model/Post");
 const Story = require("../model/story");
 
+// Create a new post
 async function createPost(req, res) {
   try {
     const userId = req.user.userId;
@@ -21,7 +22,7 @@ async function createPost(req, res) {
       mediaType = file.mimetype.startsWith("video") ? "video" : "image";
     }
 
-    // Create a new post
+    // Create Post object
     const newPost = await new Post({
       user: userId,
       content,
@@ -34,13 +35,12 @@ async function createPost(req, res) {
     await newPost.save();
     return response(res, 201, "Post created successfully", newPost);
   } catch (error) {
-    console.log("error in creating post", error);
+    console.log("Error creating post", error);
     return response(res, 500, "Internal server error", error.message);
   }
 }
 
-
-// create story
+// Create a new story
 const createStory = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -59,7 +59,7 @@ const createStory = async (req, res) => {
       mediaType = file.mimetype.startsWith("video") ? "video" : "image";
     }
 
-    // Create a new Story
+    // Create Story object
     const newStory = await new Story({
       user: userId,
       mediaUrl,
@@ -68,29 +68,26 @@ const createStory = async (req, res) => {
     await newStory.save();
     return response(res, 201, "Story created successfully", newStory);
   } catch (error) {
-    console.log("error in creating story", error);
+    console.log("Error creating story", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
 
-//get all Story
+// Get all stories
 const getAllStory = async (req, res) => {
   try {
     const story = await Story.find()
       .sort({ createdAt: -1 })
       .populate("user", "_id username profilePicture email")
 
-    return response(res, 200, "Get all story successfully", story);
-
-    return response(res, 200, "All posts", posts);
+    return response(res, 200, "Get all stories successfully", story);
   } catch (error) {
-    console.log("error in getting all story", error);
+    console.log("Error getting stories", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
 
-
-// get all post
+// Get all posts
 const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -102,21 +99,19 @@ const getAllPosts = async (req, res) => {
       });
 
     return response(res, 200, "Get all posts successfully", posts);
-
-    return response(res, 200, "All posts", posts);
   } catch (error) {
-    console.log("error in getting all post", error);
+    console.log("Error getting all posts", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
 
-//get post by userId
+// Get posts by userId
 const getPostByUserId = async (req, res) => {
   const { userId } = req.params;
 
   try {
     if (!userId) {
-      return response(res, 400, "User id is required to get user post");
+      return response(res, 400, "User id is required to get posts");
     }
     const posts = await Post.find({ user: userId })
       .sort({ createdAt: -1 })
@@ -125,14 +120,14 @@ const getPostByUserId = async (req, res) => {
         path: "comments.user",
         select: "username, profilePicture",
       });
-    return response(res, 200, "Get user post successfully", posts);
+    return response(res, 200, "Get user's posts successfully", posts);
   } catch (error) {
-    console.log("error in getting all post", error);
+    console.log("Error getting user's posts", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
 
-// like post api
+// API like post
 const likePost = async (req, res) => {
   const { postId } = req.params;
   const userId = req.user.userId;
@@ -146,13 +141,13 @@ const likePost = async (req, res) => {
       post.likes = post.likes.filter(
         (id) => id.toString() !== userId.toString()
       );
-      post.likeCount = Math.max(0, post.likeCount - 1); // ensure likeCount is non-negative
+      post.likeCount = Math.max(0, post.likeCount - 1); // Ensure likeCount is not negative
     } else {
       post.likes.push(userId);
       post.likeCount += 1;
     }
 
-    //save the like in update post
+    // Save the post after like/unlike
     const updatedPost = await post.save();
     return response(
       res,
@@ -161,13 +156,12 @@ const likePost = async (req, res) => {
       updatedPost
     );
   } catch (error) {
-    console.log("error in liking post", error);
+    console.log("Error liking post", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
 
-//post comment by user
-
+// Add comment to post
 const addCommentToPost = async (req, res) => {
   const { postId } = req.params;
   const userId = req.user.userId;
@@ -181,7 +175,7 @@ const addCommentToPost = async (req, res) => {
     post.comments.push({ user: userId, text })
     post.commentCount += 1;
     
-    //save the post wirh new comment
+    // Save the post with new comment
     await post.save();
     return response(
       res,
@@ -189,12 +183,12 @@ const addCommentToPost = async (req, res) => {
       "Comment added successfully",
     );
   } catch (error) {
-    console.log("error in comment post", error);
+    console.log("Error commenting post", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
 
-// share on post by user
+// Share post
 const sharePost = async (req, res) => {
   const { postId } = req.params;
   const userId = req.user.userId;
@@ -210,7 +204,7 @@ const sharePost = async (req, res) => {
     }
 
     post.shareCount += 1;
-    //save the post wirh new share
+    // Save the post with new share
     await post.save();
     return response(
       res,
@@ -219,11 +213,10 @@ const sharePost = async (req, res) => {
       post
     );
   } catch (error) {
-    console.log("error in share post", error);
+    console.log("Error sharing post", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
-
 
 module.exports = { 
     createPost, 
