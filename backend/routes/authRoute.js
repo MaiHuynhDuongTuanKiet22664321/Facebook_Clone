@@ -12,18 +12,23 @@ router.post('/login', loginUser)
 router.post('/logout', logoutUser)
 
 
-// google auth router
-router.get('/google',passport.authenticate('google',{scope:['profile','email']}))
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+    accessType: "offline",
+    responseType: "code"
+  })
+);
 
-// google auth callback router
-router.get('/google/callback',passport.authenticate('google',{failureRedirect:`${process.env.FRONTEND_URL}/user-login`,session: false}),
-(req,res) => {
-    const accessToken = generateToken(req?.user);
-    res.cookie("auth_token",accessToken,{
-        httpOnly: true,
-    })
-    res.redirect(`${process.env.FRONTEND_URL}`)
-}
-)
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    successRedirect: process.env.FONTEND_URL || "http://localhost:3000",
+    failureRedirect: "/login/failed"
+  })
+);
+
 
 module.exports = router;

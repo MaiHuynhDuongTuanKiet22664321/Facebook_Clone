@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -19,9 +20,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { LogIn } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { loginUser, registerUser } from "@/service/auth.sevice";
+import toast from "react-hot-toast";
 
 const page = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   // Validation schemas
@@ -62,25 +65,55 @@ const page = () => {
     register: registerLogin,
     handleSubmit: handleSubmitLogin,
     formState: { errors: errorsLogin },
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    reset: resetLoginForm,
   } = useForm({ resolver: yupResolver(loginSchema) });
 
   const {
     register: registerSignUp,
     handleSubmit: handleSubmitSignUp,
     formState: { errors: errorsSignUp },
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    reset: resetRegisterForm,
   } = useForm({ resolver: yupResolver(registerSchema) });
 
-  // Submit handlers
-  const onSubmitLogin = (data) => {
-    console.log("Login data:", data);
-    // router.push("/dashboard");
+  const onSubmitRegister = async (data) => {
+    try {
+      const result = await registerUser();
+      if (result?.status === "success") {
+        router.push("/");
+      }
+      toast.success("User registered successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Email already exists. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const onSubmitSignUp = (data) => {
-    console.log("Sign Up data:", data);
-    // router.push("/dashboard");
+  // reset the form
+  useEffect(() => {
+    resetLoginForm();
+    resetRegisterForm();
+  }, [resetLoginForm, resetRegisterForm]);
+
+  const onSubmitLogin = async (data) => {
+    try {
+      const result = await loginUser();
+      if (result?.status === "success") {
+        router.push("/");
+      }
+      toast.success("User login successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Invalid email or password. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/callback`;
+    console.log("Google URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
   };
 
   return (
@@ -90,21 +123,31 @@ const page = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-[90vw] max-w-md sm:max-w-lg md:max-w-xl bg-gray-800 rounded-2xl shadow-xl p-6 space-y-4">
+        <Card className="w-[90vw] max-w-md sm:max-w-lg md:max-w-xl bg-gradient-to-br from-cyan-200/50 via-blue-300/50 to-violet-300/50 backdrop-blur-md rounded-2xl shadow-xl p-6 space-y-4">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-white">
+            <CardTitle className="text-2xl font-bold text-black">
               Facebook
             </CardTitle>
-            <CardDescription className="text-white text-sm">
+            <CardDescription className="text-black text-sm">
               Connect with friends and the world around you on Facebook
             </CardDescription>
           </CardHeader>
 
           <CardContent>
             <Tabs defaultValue="login" className="w-full ">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Sign Up</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4 rounded-lg shadow-inner bg-white/10 border border-white/20 overflow-hidden">
+                <TabsTrigger
+                  value="login"
+                  className="py-2 px-4 text-black  hover:bg-white/20 focus:bg-gray text-sm font-semibold"
+                >
+                  Login
+                </TabsTrigger>
+                <TabsTrigger
+                  value="register"
+                  className="py-2 px-4 text-black hover:bg-white/20 focus:bg-gray text-sm font-semibold"
+                >
+                  Sign Up
+                </TabsTrigger>
               </TabsList>
 
               {/* Login Form */}
@@ -112,7 +155,7 @@ const page = () => {
                 <form onSubmit={handleSubmitLogin(onSubmitLogin)}>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="loginEmail" className="text-white mb-1">
+                      <Label htmlFor="loginEmail" className="text-black mb-1">
                         Email
                       </Label>
                       <Input
@@ -120,7 +163,7 @@ const page = () => {
                         type="email"
                         {...registerLogin("email")}
                         placeholder="Enter your email"
-                        className="text-white"
+                        className="text-black"
                       />
                       {errorsLogin.email && (
                         <p className="text-red-500 text-sm">
@@ -129,7 +172,10 @@ const page = () => {
                       )}
                     </div>
                     <div>
-                      <Label htmlFor="loginPassword" className="text-white mb-1">
+                      <Label
+                        htmlFor="loginPassword"
+                        className="text-black mb-1"
+                      >
                         Password
                       </Label>
                       <Input
@@ -137,7 +183,7 @@ const page = () => {
                         type="password"
                         {...registerLogin("password")}
                         placeholder="Enter your password"
-                        className="text-white"
+                        className="text-black"
                       />
                       {errorsLogin.password && (
                         <p className="text-red-500 text-sm">
@@ -155,10 +201,10 @@ const page = () => {
 
               {/* Register Form */}
               <TabsContent value="register">
-                <form onSubmit={handleSubmitSignUp(onSubmitSignUp)}>
+                <form onSubmit={handleSubmitSignUp(onSubmitRegister)}>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="signupName" className="text-white mb-1">
+                      <Label htmlFor="signupName" className="text-black mb-1">
                         User name
                       </Label>
                       <Input
@@ -166,7 +212,7 @@ const page = () => {
                         type="text"
                         {...registerSignUp("username")}
                         placeholder="Enter your username"
-                        className="text-white"
+                        className="text-black"
                       />
                       {errorsSignUp.username && (
                         <p className="text-red-500 text-sm">
@@ -176,7 +222,7 @@ const page = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="signUpEmail" className="text-white mb-1">
+                      <Label htmlFor="signUpEmail" className="text-black mb-1">
                         Email
                       </Label>
                       <Input
@@ -184,7 +230,7 @@ const page = () => {
                         type="email"
                         {...registerSignUp("email")}
                         placeholder="Enter your email"
-                        className="text-white"
+                        className="text-black"
                       />
                       {errorsSignUp.email && (
                         <p className="text-red-500 text-sm">
@@ -194,7 +240,10 @@ const page = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="signUpPassword" className="text-white mb-1">
+                      <Label
+                        htmlFor="signUpPassword"
+                        className="text-black mb-1"
+                      >
                         Password
                       </Label>
                       <Input
@@ -202,7 +251,7 @@ const page = () => {
                         type="password"
                         {...registerSignUp("password")}
                         placeholder="Enter your password"
-                        className="text-white"
+                        className="text-black"
                       />
                       {errorsSignUp.password && (
                         <p className="text-red-500 text-sm">
@@ -212,7 +261,10 @@ const page = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="signUpBirthday" className="text-white mb-1">
+                      <Label
+                        htmlFor="signUpBirthday"
+                        className="text-black mb-1"
+                      >
                         Birthday
                       </Label>
                       <Input
@@ -229,7 +281,7 @@ const page = () => {
                     </div>
 
                     <div>
-                      <Label className="text-white mb-1">Gender</Label>
+                      <Label className="text-black mb-1">Gender</Label>
                       <RadioGroup
                         className="flex justify-between space-x-4"
                         defaultValue="male"
@@ -273,7 +325,10 @@ const page = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="confirmPassword" className="text-white mb-1">
+                      <Label
+                        htmlFor="confirmPassword"
+                        className="text-black mb-1"
+                      >
                         Confirm Password
                       </Label>
                       <Input
@@ -281,7 +336,7 @@ const page = () => {
                         type="password"
                         {...registerSignUp("confirmPassword")}
                         placeholder="Confirm your password"
-                        className="text-white"
+                        className="text-black"
                       />
                       {errorsSignUp.confirmPassword && (
                         <p className="text-red-500 text-sm">
@@ -316,7 +371,11 @@ const page = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 className="w-full flex items-center justify-center"
               >
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleGoogleLogin}
+                >
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
