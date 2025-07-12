@@ -1,7 +1,9 @@
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
-import Header from "./components/Header";
+import AuthWrapper from "./auth-wrapper";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Facecook",
-  description: "Mai Huynh Duong Tuan Kiet",
+  description: "Make clone of Facebook",
 };
 
 export default function RootLayout({ children }) {
@@ -24,9 +26,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster/>
         <ThemeProvider attribute="class">
-          <Header/>
-          {children}
+          <AuthWrapper>{children}</AuthWrapper>
         </ThemeProvider>
         
       </body>

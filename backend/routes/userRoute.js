@@ -12,7 +12,13 @@ const {
   getUserProfile
 
 } = require("../controllers/userController");
+const { 
+  updateUserProfilre,
+  createOrUpdateController,
+  updateCoverProfilre
+} = require("../controllers/createOrUpdateController");
 const router = express.Router();
+const {multerMiddleware} = require("../config/cloudinary");
 
 
 // follow user
@@ -42,6 +48,16 @@ router.get("/check-auth", authMiddleware, checkAuthenticated);
 
 // get user profile
 router.get("/profile/:userId", authMiddleware, getUserProfile);
+
+// create or update user bio
+router.put("/bio/:userId", authMiddleware, createOrUpdateController);
+
+
+// update cover photo
+router.put("/profile/:userId", authMiddleware, multerMiddleware.single("profilePicture"), updateUserProfilre);
+
+// update user profile
+router.put("/profile/cover-photo/:userId", authMiddleware, multerMiddleware.single("coverPhoto"),updateCoverProfilre);
 
 
 

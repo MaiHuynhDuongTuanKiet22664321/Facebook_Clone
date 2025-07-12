@@ -1,52 +1,63 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     username: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
-        type: String,
-        default: null,
+      type: String,
+      default: null,
     },
     gender: {
-        type: String,
-        default: null,
+      type: String,
+      default: null,
     },
     dateOfBirth: {
-        type: Date,
-        default: null,
+      type: Date,
+      default: null,
     },
     profilePicture: {
-        type: String,
-        default: null,
+      type: String,
+      default: null,
     },
     coverPhoto: {
-        type: String,
-        default: null,
+      type: String,
+      default: null,
     },
-    followers: [{
+    followers: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    }],
-    following: [{
+        ref: "User",
+      },
+    ],
+    following: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    }],
+        ref: "User",
+      },
+    ],
     followerCount: {
-        type: Number,
-        default: 0,
+      type: Number,
+      default: 0,
     },
     followingCount: {
-        type: Number,
-        default: 0,
+      type: Number,
+      default: 0,
     },
-}, { timestamps: true });
+    bio: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Bio",
+    },
+  },
+  { timestamps: true }
+);
 
 userSchema.index({ email: 1 });
 
