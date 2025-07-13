@@ -13,7 +13,6 @@ passport.use(new GoogleStrategy({
 },
 async(req,accessToken,refreshToken,profile,done) =>{
     const {emails,displayName,photos} =profile;
-    console.log(profile)
     try {
          let user = await User.findOne({email:emails[0].value})
          if(user) {

@@ -1,74 +1,50 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import LeftSideBar from '../components/LeftSideBar'
 import RightSideBar from '../components/RightSideBar'
 import StorySection from '@/app/story/StorySection'
 import NewPostForm from '../post/NewPostForm'
 import PostCard from '../post/PostCard'
+import { usePostStore } from '@/store/usePostStore'
 
 const HomePage = () => {
   const [isPostFormOpen, setIsPostFormOpen] = useState(false)
+  const [likePosts,setLikePosts] = useState(new Set());
+  const {posts,story,fetchPost,fetchUserPost,fetchStoryPost,handleCreatePost,handleCreateStory,handleLikePost,handleCommentPost,handleSharePost} = usePostStore();
 
-  const posts = [
-    {
-      id:1,
-      content: "Facebook Clone",
-      mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
-      mediaType: "video",
-      user: {
-        username: "Mai Huynh Duong Tuan Kiet",
-        avatarUrl: "...",
-      },
-      comments: [
-        {
-          user: {
-            username: "Mai Huynh Duong Tuan Kiet",
-            avatarUrl: "...",
-          },
-          text: "Hello",
-          createdAt: "1h ago",
-        },
-        {
-          user: {
-            username: "Mai Tuan Kiet",
-            avatarUrl: "...",
-          },
-          text: "Good morning",
-          createdAt: "4h ago",
-        },
-      ],
-    },
-    {
-      id:2,
-      content: "Nui ",
-      mediaUrl: "https://images.unsplash.com/photo-1751420860835-68256ba0f82a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzNHx8fGVufDB8fHx8fA%3D%3D",
-      mediaType: "image",
-      user: {
-        username: "Duong Tuan Kiet",
-        avatarUrl: "...",
-      },
-      comments: [
-        {
-          user: {
-            username: "Mai Huynh Duong Tuan Kiet",
-            avatarUrl: "...",
-          },
-          text: "Here we go",
-          createdAt: "3 day ago",
-        },
-        {
-          user: {
-            username: "Tuan Kiet",
-            avatarUrl: "...",
-          },
-          text: "Good morning",
-          createdAt: "4h ago",
-        },
-      ],   
+  useEffect(() =>{
+    fetchPost()
+  },[fetchPost])
+
+  useEffect(() =>{
+    const saveLikes = localStorage.getItem('likePosts');
+    if(saveLikes){
+      setLikePosts(new Set(JSON.parse(saveLikes)));
     }
-  ]
+  },[]);
 
+
+  const handleLike = async(postId)=>{
+    const updatedLikePost = new Set(likePosts);
+    if(updatedLikePost.has(postId)){
+      updatedLikePost.delete(postId);
+      toast.error('post disliked successfully')
+    }else {
+      updatedLikePost.add(postId)
+      toast.success('post like successfully')
+    }
+    setLikePosts(updatedLikePost);
+    localStorage.setItem('likePosts',JSON.stringify(Array.from(updatedLikePost)))
+
+    try {
+      await handleLikePost(postId);
+      await fetchPost();
+    } catch (error) {
+       console.error(error);
+       toast.error('failed to like or unlike the post')
+    }
+  }
   return (
     <div className='flex flex-col min-h-screen bg-background text-foreground'>
       <main className='flex flex-1 pt-16'>
@@ -82,10 +58,19 @@ const HomePage = () => {
           />
           <div className='mt-6 space-y-6 mb-4'>
             {posts.map((post, index) => (
-              <PostCard
-                key={index}
-                post={post}
-              />
+              <PostCard key={post._id} 
+                  post={post}
+                  isLiked = {likePosts.has(post?._id)}
+                  onLike={() => handleLike(post?._id)}
+                  onComment={async(comment) => {
+                    await handleCommentPost(post?._id,comment.text);
+                    await fetchPost();
+                  }}
+                  onShare = {async() =>{
+                  await handleSharePost(post?._id)
+                  await fetchPost();
+                  }}
+                />
             ))}
           </div>
         </div>

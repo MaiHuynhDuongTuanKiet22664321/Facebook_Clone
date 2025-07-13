@@ -1,6 +1,6 @@
 import React from 'react'
-import ProfileHeader from './ProfileHeader'
-import ProfileTab from './ProfileTab'
+import ProfileHeader from '../ProfileHeader'
+import ProfileTab from '../ProfileTab'
 
 const page = () => {
   return (
