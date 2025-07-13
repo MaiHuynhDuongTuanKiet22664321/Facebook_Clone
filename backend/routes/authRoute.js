@@ -1,34 +1,33 @@
-const express = require("express");
+const express = require('express');
+const { registerUser, loginUser, logoutUser } = require('../controllers/authController');
+const passport = require('passport');
+const { generateToken } = require('../utils/generateToken');
 const router = express.Router();
-const { registerUser, loginUser, logoutUser } = require("../controllers/authController");
-const passport = require("passport");
-const { session } = require("express-session");
-const { generateToken } = require("../utils/generateToken");
 
 
 
-router.post('/register', registerUser)
-router.post('/login', loginUser)
-router.post('/logout', logoutUser)
+router.post('/register',registerUser)
+router.post('/login',loginUser)
+router.get('/logout', logoutUser)
 
 
-router.get(
-  "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-    prompt: "select_account",
-    accessType: "offline",
-    responseType: "code"
-  })
-);
 
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: process.env.FONTEND_URL || "http://localhost:3000",
-    failureRedirect: "/login/failed"
-  })
-);
+//google oauth routes
+router.get('/google',passport.authenticate('google',{
+    scope: ['profile', 'email ']
+}))
 
+//google callback routes
+router.get('/google/callback', passport.authenticate('google', {failureRedirect: `${process.env.FRONTEND_URL}/user-login`, session:false}),
+ (req,res) =>{ 
+    const accessToken = generateToken(req?.user);
+    res.cookie("auth_token",accessToken,{
+        httpOnly: true,
+        sameSite:"none",
+        secure:true
+    })
+   res.redirect(`${process.env.FRONTEND_URL}`)
+ }
+)
 
 module.exports = router;

@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
 
 const ApiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const axiosInstance = axios.create({
     baseURL: ApiUrl,
-    wwithCredentials: true
-});  
+    withCredentials:true
+})
 
 export default axiosInstance;

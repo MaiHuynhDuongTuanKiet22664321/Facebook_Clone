@@ -72,50 +72,50 @@ const page = () => {
     register: registerSignUp,
     handleSubmit: handleSubmitSignUp,
     formState: { errors: errorsSignUp },
-    reset: resetRegisterForm,
+    reset: resetSignUpForm,
   } = useForm({ resolver: yupResolver(registerSchema) });
 
-  const onSubmitRegister = async (data) => {
+  const onSubmitRegister = async(data) =>{
     try {
-      const result = await registerUser();
-      if (result?.status === "success") {
-        router.push("/");
-      }
-      toast.success("User registered successfully");
+       const result = await registerUser(data)
+        if(result.status === 'success'){
+          router.push('/')
+        }
+        toast.success('User register successfully')
     } catch (error) {
       console.error(error);
-      toast.error("Email already exists. Please try again.");
-    } finally {
+      toast.error('email already exist')
+    }finally{
       setIsLoading(false);
     }
-  };
+  }
 
-  // reset the form
-  useEffect(() => {
-    resetLoginForm();
-    resetRegisterForm();
-  }, [resetLoginForm, resetRegisterForm]);
 
-  const onSubmitLogin = async (data) => {
+  //reset the form
+  useEffect(() =>{
+     resetLoginForm();
+     resetSignUpForm()
+  },[resetLoginForm,resetSignUpForm])
+
+
+  const onSubmitLogin = async(data) =>{
     try {
-      const result = await loginUser();
-      if (result?.status === "success") {
-        router.push("/");
-      }
-      toast.success("User login successfully");
+       const result = await loginUser(data)
+        if(result.status === 'success'){
+          router.push('/')
+        }
+        toast.success('User login successfully')
     } catch (error) {
       console.error(error);
-      toast.error("Invalid email or password. Please try again.");
-    } finally {
+      toast.error('invalid email or password')
+    }finally{
       setIsLoading(false);
     }
-  };
+  }
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/callback`;
-    console.log("Google URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
-  };
-
+  const handleGoogleLogin = () =>{
+    window.location.href= `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center p-4">
       <motion.div
