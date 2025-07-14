@@ -144,7 +144,7 @@ const likePost = async(req, res) => {
          if(!post) {
             return response(res,404,'post not found')
          }
-         const hasLiked = post.likes.includes(userId)
+         const hasLiked = post.likes.map(id => id.toString()).includes(userId.toString());
          if(hasLiked){
             post.likes = post.likes.filter(id => id.toString() !== userId.toString())
             post.likeCount =  Math.max(0, post.likeCount - 1) ; //ensure llikecount does not go negative
