@@ -7,12 +7,12 @@ import StorySection from '@/app/story/StorySection'
 import NewPostForm from '../post/NewPostForm'
 import PostCard from '../post/PostCard'
 import { usePostStore } from '@/store/usePostStore'
+import toast from 'react-hot-toast'
 
 const HomePage = () => {
   const [isPostFormOpen, setIsPostFormOpen] = useState(false)
   const [likePosts,setLikePosts] = useState(new Set());
   const {posts,story,fetchPost,fetchUserPost,fetchStoryPost,handleCreatePost,handleCreateStory,handleLikePost,handleCommentPost,handleSharePost} = usePostStore();
-
   useEffect(() =>{
     fetchPost()
   },[fetchPost])

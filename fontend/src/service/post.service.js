@@ -63,7 +63,9 @@ export const likePost = async(postId) =>{
 export const commentsPost = async(postId,comment) =>{
     try {
          const result = await  axiosInstance.post(`/users/posts/comments/${postId}`,comment)
+         console.log('Result',result?.data?.data)
          return result?.data?.data;
+         
     } catch (error) {
         console.error(error)
         throw error;

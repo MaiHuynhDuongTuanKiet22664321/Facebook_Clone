@@ -43,7 +43,7 @@ const LeftSideBar = () => {
         {/* navigation menu  */}
         <nav className="space-y-6 flex-grow">
           <div className="flex items-center space-x-3 mb-6 cursor-pointer">
-            <Avatar className="h-10 w-10">
+            <Avatar className="h-8 w-8">
               {user?.profilePicture ? (
                 <AvatarImage src={user?.profilePicture} alt={user?.username} />
               ) : (
@@ -118,7 +118,7 @@ const LeftSideBar = () => {
         <div className="mb-16">
           <Separator className="my-4" />
           <div className="flex items-center space-x-2 mb-4 cursor-pointer">
-            <Avatar className="h-10 w-10">
+            <Avatar className="h-8 w-8">
               {user?.profilePicture ? (
                 <AvatarImage src={user?.profilePicture} alt={user?.username} />
               ) : (

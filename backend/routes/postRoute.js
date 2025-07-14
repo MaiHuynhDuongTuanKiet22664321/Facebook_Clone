@@ -10,7 +10,7 @@ const {
   sharePost,
   addCommentToPost,
   createStory,
-  getAllStory
+  getAllStory,
 } = require("../controllers/postController");
 
 // create post
@@ -37,5 +37,8 @@ router.post("/story",authMiddleware,multerMiddleware.single("media"),createStory
 
 // get all story
 router.get("/story", authMiddleware, getAllStory);
+
+
+
 
 module.exports = router;

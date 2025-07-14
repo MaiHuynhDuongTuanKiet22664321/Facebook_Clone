@@ -2,6 +2,7 @@ const { response } = require("../utils/responseHandler");
 const { uploadFileToCloudinary } = require("../config/cloudinary");
 const Post = require("../model/Post");
 const Story = require("../model/story");
+const mongoose = require("mongoose");
 
 // Create a new post
 async function createPost(req, res) {
@@ -149,6 +150,7 @@ const likePost = async (req, res) => {
 
     // Save the post after like/unlike
     const updatedPost = await post.save();
+    console.log("A:",updatedPost)
     return response(
       res,
       200,
@@ -161,32 +163,39 @@ const likePost = async (req, res) => {
   }
 };
 
-// Add comment to post
-const addCommentToPost = async (req, res) => {
-  const { postId } = req.params;
-  const userId = req.user.userId;
-  const {text} = req.body
-  try {
-    const post = await Post.findById(postId);
-    if (!post) {
-      return response(res, 404, "Post not found");
-    }
+//post comments by user
 
-    post.comments.push({ user: userId, text })
-    post.commentCount += 1;
-    
-    // Save the post with new comment
-    await post.save();
-    return response(
-      res,
-      200,
-      "Comment added successfully",
-    );
+const addCommentToPost = async(req,res) =>{
+  const {postId} = req.params;
+  const userId= req.user.userId;
+  const {text} = req.body;
+  try {
+       const post = await Post.findById(postId)
+       if(!post) {
+          return response(res,404,'post not found')
+       }
+
+       post.comments.push({user: mongoose.Types.ObjectId(userId), text})
+       post.commentCount+=1;
+        
+       //save the post with new comments
+       await post.save()
+
+       // Lấy lại post đã populate user cho comments
+       const populatedPost = await Post.findById(postId)
+        .populate("user", "_id username profilePicture email")
+        .populate({
+          path: "comments.user",
+          select: "username profilePicture",
+          model: "User"
+        });
+
+       return response(res, 200, "Comment added successfully", populatedPost )
   } catch (error) {
-    console.log("Error commenting post", error);
-    return response(res, 500, "Internal server error", error.message);
+      console.log(error)
+      return response(res,500,'Internal server error',error.message)
   }
-};
+}
 
 // Share post
 const sharePost = async (req, res) => {
