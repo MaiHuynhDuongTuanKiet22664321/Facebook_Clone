@@ -1,5 +1,6 @@
-const { response } = require("../utils/responseHandler");
+
 const User = require("../model/User");
+const response = require("../utils/responseHandler");
 
 // Follow a user
 const followUser = async (req, res) => {

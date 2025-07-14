@@ -1,7 +1,7 @@
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
-const { response } = require("../utils/responseHandler");
 const { generateToken } = require("../utils/generateToken");
+const response = require("../utils/responseHandler");
 
 
 const registerUser = async (req, res) => {

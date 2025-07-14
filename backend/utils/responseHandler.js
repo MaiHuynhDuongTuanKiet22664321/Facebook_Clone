@@ -1,10 +1,10 @@
-const response = (res, statusCode, message, data = null) => {
+const response = (res,stateCode,message,data=null)=>{
     const responseObject = {
-        status: statusCode < 400 ? "success" : "error",
+        status:stateCode < 400 ? 'success' : 'error',
         message,
-        data,
+        data
     }
-    return res.status(statusCode).json(responseObject);
+    return res.status(stateCode).json(responseObject)
 }
 
-module.exports = { response } 
+module.exports= response;

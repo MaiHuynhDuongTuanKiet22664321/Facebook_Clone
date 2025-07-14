@@ -32,7 +32,7 @@ const PostComments = ({ post, onComment, commentInputRef }) => {
       <h3 className="font-semibold mb-2">Comments</h3>
       <div className="max-h-60 overflow-y-auto pr-2">
         {visibleComments?.map((comment, index) => (
-          (() => { console.log('Comment user:', comment.user); return null; })(),
+          (() => { console.log('Comment user:', comment); return null; })(),
           <div key={index} className="flex items-start space-x-2 mb-2">
             <Avatar className="w-8 h-8">
               {comment?.user?.profilePicture ? (
