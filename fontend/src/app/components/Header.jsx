@@ -70,8 +70,8 @@ const Header = () => {
         <div className="flex items-center gap-2 md:gap-4">
           <Image
             src="/images/logoFB.png"
-            width={45}
-            height={45}
+            width={50}
+            height={50}
             alt="facebook_logo"
             onClick={() => handleNavigation("/")}
             className="cursor-pointer"
@@ -82,7 +82,7 @@ const Header = () => {
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
                   className="pl-8 w-40 md:w-64 bg-gray-100 dark:bg-[rgb(58,59,60)] rounded-full"
-                  placeholder="search facebook..."
+                  placeholder="Search facebook..."
                 />
               </div>
               {isSearchOpen && (

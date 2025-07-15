@@ -1,49 +1,65 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LeftSideBar from "../components/LeftSideBar";
 import { FriendCardSkeleton, NoFriendsMessage } from "@/lib/Skeleten";
 import FriendRequest from "./FriendRequest";
-import FriendSuggestion from "./FriendSuggestion";
+import FriendsSuggestion from "./FriendSuggestion";
+import { userFriendStore } from "@/store/userFriendStore";
+import toast from "react-hot-toast";
 
-const page = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [loading, setLoading] = useState(false);
-  const friendRequest = [{}];
-  const friendSuggestions = [{}];
+
+const Page = () => {
+   const {followUser,loading,UnfollowUser,fetchFriendRequest,fetchFriendSuggestion,deleteUserFromRequest,fetchMutualFriends,friendRequest,friendSuggestion,mutualFriends} = userFriendStore()
+
+   useEffect(() => {
+       fetchFriendRequest(),
+       fetchFriendSuggestion()
+   },[])
+   
+   const handleAction = async(action,userId) =>{
+    if(action === "confirm"){
+       toast.success("friend added successfully")
+        await followUser(userId);
+        fetchFriendRequest()
+        fetchFriendSuggestion()
+    } else if(action ==="delete"){
+      await UnfollowUser(userId);
+      fetchFriendRequest()
+      fetchFriendSuggestion()
+    } 
+   }
+   
+   
   return (
-    <div className="nim-h-screen bg-gray-100 dark:bg-[rgb(36,37,38)]">
+    <div className="min-h-screen bg-gray-100 dark:bg-[rgb(36,37,38)] ">
       <LeftSideBar />
       <main className="ml-0 md:ml-64 mt-16 p-6">
-        <h1 className="text-2xl font-bold mb-6">Friends Request</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+        <h1 className="text-2xl font-bold mb-6">Friends Requests</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
           {loading ? (
             <FriendCardSkeleton />
           ) : friendRequest.length === 0 ? (
             <NoFriendsMessage
-              text="No Friend Request"
+              text="No Friend Requests"
               description="Looks like you are all caught up! Why not explore and connect with new people?"
             />
           ) : (
-            friendRequest.map((friend, index) => (
-              // eslint-disable-next-line react/jsx-key
-              <FriendRequest friend={friend} key={index} />
-            ))
+            friendRequest.map((friend) => <FriendRequest key={friend._id}  friend={friend} loading={loading} onAction={handleAction}  />)
           )}
         </div>
 
-        <h1 className="text-2xl font-bold mb-6">Pepole you may know</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+        <h1 className="text-2xl font-bold mb-6">People you may know</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
           {loading ? (
             <FriendCardSkeleton />
-          ) : friendSuggestions.length === 0 ? (
+          ) : friendSuggestion.length === 0 ? (
             <NoFriendsMessage
-              text="No Friend Suggestions"
+              text="No Friend Suggestion"
               description="Looks like you are all caught up! Why not explore and connect with new people?"
             />
           ) : (
-            friendSuggestions.map((friend) => (
-              // eslint-disable-next-line react/jsx-key
-              <FriendSuggestion friend={friend} />
+            friendSuggestion.map((friend) => (
+              <FriendsSuggestion key={friend._id}   friend={friend} loading={loading} onAction={handleAction} />
             ))
           )}
         </div>
@@ -52,4 +68,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
