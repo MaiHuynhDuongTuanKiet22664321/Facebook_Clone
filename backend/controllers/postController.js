@@ -126,7 +126,7 @@ const getPostByUserId = async(req, res) => {
         .populate('user','_id username profilePicture email')
         .populate({
             path: 'comments.user',
-            select: 'username, profilePicture'
+            select: 'username profilePicture'
         })
         return response(res, 201, 'Get user post successfully', posts)
     } catch (error) {
@@ -147,16 +147,19 @@ const likePost = async(req, res) => {
          const hasLiked = post.likes.map(id => id.toString()).includes(userId.toString());
          if(hasLiked){
             post.likes = post.likes.filter(id => id.toString() !== userId.toString())
-            post.likeCount =  Math.max(0, post.likeCount - 1) ; //ensure llikecount does not go negative
+            post.likeCount =  Math.max(0, post.likeCount - 1) ; // giảm
          }else{
             post.likes.push(userId)
-            post.likeCount += 1
+            post.likeCount += 1 // tăng
          }
 
-
          //save the like in updated post
-         const updatedpost = await post.save()
-         return response(res, 201, hasLiked ? "Post unlike successfully": "post liked successfully", updatedpost )
+         await post.save();
+         const updatedpost = await Post.findById(postId)
+           .populate('user','_id username profilePicture email')
+           .populate({ path: 'comments.user', select: 'username profilePicture' });
+        // Đảo lại message cho đúng logic: nếu vừa unlike thì trả về "Post unliked successfully", nếu vừa like thì trả về "Post liked successfully"
+        return response(res, 201, !hasLiked ? "Post liked successfully" : "Post unliked successfully", updatedpost )
     } catch (error) {
         console.log(error)
         return response(res,500,'Internal server error',error.message)
@@ -175,13 +178,16 @@ const addCommentToPost = async(req,res) =>{
             return response(res,404,'post not found')
          }
 
-
          post.comments.push({user:userId,text})
          post.commentCount+=1;
           
          //save the post with new comments
          await post.save()
-         return response(res, 201, "comments added successfully", post )
+        // Lấy lại post đã populate user cho comments
+        const populatedPost = await Post.findById(postId)
+          .populate('user','_id username profilePicture email')
+          .populate({ path: 'comments.user', select: 'username profilePicture' });
+        return response(res, 201, "comments added successfully", populatedPost )
     } catch (error) {
         console.log(error)
         return response(res,500,'Internal server error',error.message)

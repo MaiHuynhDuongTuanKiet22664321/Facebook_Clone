@@ -86,7 +86,13 @@ export const usePostStore = create((set) => ({
   handleLikePost: async (postId) => {
     set({ loading: true });
     try {
-       await likePost(postId);
+      const updatedPost = await likePost(postId);
+      set((state) => ({
+        posts: state.posts.map((post) =>
+          post._id === updatedPost._id ? { ...post, ...updatedPost } : post
+        ),
+        loading: false,
+      }));
     } catch (error) {
       set({ error, loading: false });
     }
@@ -96,14 +102,13 @@ export const usePostStore = create((set) => ({
   handleCommentPost: async (postId,text) => {
     set({ loading: true });
     try {
-      const newComments = await commentsPost(postId, {text});
-       set((state) =>({
-         posts: state.posts.map((post) => 
-            post?._id === postId
-             ? {...post,comments: [...post.comments, newComments]}
-             :post
+      const updatedPost = await commentsPost(postId, {text});
+      set((state) => ({
+        posts: state.posts.map((post) =>
+          post._id === updatedPost._id ? updatedPost : post
         ),
-       }))
+        loading: false,
+      }));
       toast.success("Comments added successfully");
     } catch (error) {
       set({ error, loading: false });

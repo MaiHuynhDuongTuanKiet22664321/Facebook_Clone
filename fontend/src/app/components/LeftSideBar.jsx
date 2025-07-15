@@ -2,11 +2,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { logout } from "@/service/auth.sevice";
 import useSidebarStore from "@/store/sidebarStore";
 import userStore from "@/store/userStore";
 import {
   Bell,
   Home,
+  LogOut,
   MessageCircle,
   User,
   User2,
@@ -15,11 +17,12 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 const LeftSideBar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebarStore();
   const router = useRouter();
-  const { user } = userStore();
+  const { user, clearUser } = userStore();
 
   const userPlaceholder = user?.username
     ?.split("")
@@ -31,6 +34,21 @@ const LeftSideBar = () => {
       toggleSidebar();
     }
   };
+
+  const handleLogout = async () => {
+    try {
+      const result = await logout();
+      if (result?.status == "success") {
+        router.push("/user-login");
+        clearUser();
+      }
+      toast.success("user logged out successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("failed to log out");
+    }
+  };
+
   return (
     <aside
       className={`fixed top-16 left-0 h-full w-64 p-4 transform transition-transform duration-200 ease-in-out md:translate-x-0 flex flex-col z-50 md:z-0 ${
@@ -135,6 +153,13 @@ const LeftSideBar = () => {
             </span>
           </div>
           <div className="text-xs text-muted-foreground space-y-1">
+            <Button
+              variant="ghost"
+              className="cursor-pointer-ml-4 "
+              onClick={handleLogout}
+            >
+              <LogOut /> <span className="ml-2 font-bold text-md">Logout</span>
+            </Button>
             <p>Privacy · Terms · Advertising ·</p>
             <p>· Meta © 2024</p>
           </div>

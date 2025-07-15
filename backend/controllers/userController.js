@@ -242,7 +242,8 @@ const getUserProfile = async (req, res) => {
     const { userId } = req.params;
     const loggedInUserId = req?.user?.userId;
 
-    const userProfile = await User.findById(userId).select("-password");
+    // Sửa tại đây: populate trường bio
+    const userProfile = await User.findById(userId).select("-password").populate('bio');
     if (!userProfile) return response(res, 404, "User not found");
 
     const isOwner = loggedInUserId === userId;

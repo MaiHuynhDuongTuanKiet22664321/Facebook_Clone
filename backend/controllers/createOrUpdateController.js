@@ -1,11 +1,13 @@
-const Bio = require("../model/UserBio");
-const User = require("../model/User");
-const { response } = require("../utils/responseHandler");
 const { uploadFileToCloudinary } = require("../config/cloudinary");
+const User = require("../model/User");
+const Bio = require("../model/UserBio");
+const response = require("../utils/responseHandler");
 
 
 
-const createOrUpdateController = async(req, res) => {
+
+const createOrUpdateUserBio = async(req,res) =>{
+    console.log('req.body:', req.body);
     try {
         const {userId} = req.params;
         const {bioText,liveIn,relationShip,workplace,education,phone,hometown} = req.body;
@@ -21,10 +23,10 @@ const createOrUpdateController = async(req, res) => {
                 phone,
                 hometown
             },
-            {new:true,runValidators:true}
+            {new : true, runValidators:true},
         )
 
-        // if bio dose not exist to create new one
+        // if bio does not exist to create new one
         if(!bio){
             bio = new Bio({
                 user:userId,
@@ -36,106 +38,97 @@ const createOrUpdateController = async(req, res) => {
                 phone,
                 hometown
             })
+
             await bio.save();
-            await User.findByIdAndUpdate(userId,{bio:bio._id})
+            await User.findByIdAndUpdate(userId,{bio: bio._id})
         }
 
-        return response(res,200,"Bio updated successfully",bio)
+        return response(res,201, 'Bio create or update successfully',bio)
+
     } catch (error) {
-        console.log("Error in createOrUpdateController:", error);
-        return response(res, 500, "Internal server error", error.message);
+        console.log(error)
+        return response(res,500,'Internal server error',error.message)
     }
 }
 
-const updateCoverProfilre = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const file = req.file;
-    let coverPhoto = null; // ✅ dùng let thay vì const
 
-    if (file) {
-      const uploadResult = await uploadFileToCloudinary(file);
-      coverPhoto = uploadResult?.secure_url;
-    }
+const updateCoverPhoto = async(req, res) =>{
+       try {
+         const {userId} = req.params;
+         const file = req.file;
+         let coverPhoto = null;
 
-    if (!coverPhoto) {
-      return response(res, 400, "Failed to upload cover photo", null);
-    }
+         if(file){
+            const uploadResult = await uploadFileToCloudinary(file)
+            coverPhoto= uploadResult.secure_url
+         }
 
-    const update = await User.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          coverPhoto,
-        },
+         if(!coverPhoto){
+            return response(res,400, 'failed to upload cover photo')
+         }
+         //update user profile with cover photo
+            await User.updateOne(
+            {_id:userId},
+            {
+                $set:{
+                    coverPhoto,
+                },
+            }
+         )
+         const updateUser = await User.findById(userId)
+
+         if(!updateUser){
+           return response(res,404, 'user not found with this id')
+         }
+         return response(res,200, 'Cover photo update successfully',updateUser)
+       } catch (error) {
+        console.log(error)
+        return response(res,500,'Internal server error',error.message)
+       }
+}
+
+
+
+const updateUserProfile = async(req, res) =>{
+    try {
+      const {userId} = req.params;
+      const {username,gender,dateOfBirth} = req.body;
+      const file = req.file;
+      let profilePicture = null;
+
+      if(file){
+         const uploadResult = await uploadFileToCloudinary(file)
+         profilePicture= uploadResult.secure_url
       }
-    );
+  
+      //update user profile with cover photo
+        await User.updateOne(
+         {_id:userId},
+         {
+             $set:{
+                username,
+                gender,
+                dateOfBirth,
+                  ...(profilePicture && {profilePicture})
+             },
+         }
+      )
 
-    const updateUser = await User.findById(userId);
+      const updateUser = await User.findById(userId)
 
-    if (!updateUser) {
-      return response(res, 400, "User not found");
-    }
-
-    return response(
-      res,
-      200,
-      "Cover photo updated successfully",
-      updateUser
-    );
-  } catch (error) {
-    console.log("Error in updateCoverProfilre:", error);
-    return response(res, 500, "Internal server error", error.message);
-  }
-};
-
-
-
-const updateUserProfilre = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { username, gender, dateOfBirth } = req.body;
-    const file = req.file;
-    let profilePicture = null;
-
-    if (file) {
-      const uploadResult = await uploadFileToCloudinary(file);
-      profilePicture = uploadResult?.secure_url;
-    }
-
-    if (!profilePicture) {
-      return response(res, 400, "Failed to upload profile picture", null);
-    }
-
-    // update user profile
-    await User.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          username,
-          gender,
-          dateOfBirth,
-          ...(profilePicture && { profilePicture }),
-        },
+      if(!updateUser){
+        return response(res,404, 'user not found with this id')
       }
-    );
 
-    const updateUser = await User.findById(userId);
-
-    if (!updateUser) {
-      return response(res, 400, "User not found");
+      return response(res,200, 'user profile update successfully',updateUser)
+    } catch (error) {
+     console.log(error)
+     return response(res,500,'Internal server error',error.message)
     }
-
-    return response(res, 200, "User profile updated successfully", updateUser);
-  } catch (error) {
-    console.log("Error in updateUserProfilre:", error);
-    return response(res, 500, "Internal server error", error.message);
-  }
-};
-
+}
 
 module.exports = {
-    createOrUpdateController,
-    updateCoverProfilre,
-    updateUserProfilre
+  updateUserProfile,
+  createOrUpdateUserBio,
+  updateCoverPhoto
 }

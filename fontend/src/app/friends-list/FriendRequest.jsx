@@ -12,6 +12,7 @@ const FriendRequest = ({ friend, onAction }) => {
     .join("");
   return (
     <AnimatePresence>
+
       <motion.div
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}

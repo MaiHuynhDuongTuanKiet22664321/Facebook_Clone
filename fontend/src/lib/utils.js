@@ -11,4 +11,8 @@ export const formateDate = (date) =>{
   return formatDistanceToNow(parseISO(date),{addSuffix: true});
 }
 
+export const  formatDateInDDMMYYY = (date) =>{
+  return new Date(date).toLocaleDateString('en-GB')
+}
+
 

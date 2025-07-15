@@ -13,9 +13,9 @@ const {
 
 } = require("../controllers/userController");
 const { 
-  updateUserProfilre,
-  createOrUpdateController,
-  updateCoverProfilre
+  updateUserProfile,
+  createOrUpdateUserBio,
+  updateCoverPhoto
 } = require("../controllers/createOrUpdateController");
 const router = express.Router();
 const {multerMiddleware} = require("../config/cloudinary");
@@ -50,17 +50,18 @@ router.get("/check-auth", authMiddleware, checkAuthenticated);
 router.get("/profile/:userId", authMiddleware, getUserProfile);
 
 // create or update user bio
-router.put("/bio/:userId", authMiddleware, createOrUpdateController);
+router.put("/bio/:userId", authMiddleware, createOrUpdateUserBio);
 
 
 // update cover photo
-router.put("/profile/:userId", authMiddleware, multerMiddleware.single("profilePicture"), updateUserProfilre);
+router.put("/profile/:userId", authMiddleware, multerMiddleware.single("profilePicture"), updateUserProfile);
 
 // update user profile
-router.put("/profile/cover-photo/:userId", authMiddleware, multerMiddleware.single("coverPhoto"),updateCoverProfilre);
+router.put("/profile/cover-photo/:userId", authMiddleware, multerMiddleware.single("coverPhoto"), updateCoverPhoto);
 
 
 
 
 
 module.exports = router;
+

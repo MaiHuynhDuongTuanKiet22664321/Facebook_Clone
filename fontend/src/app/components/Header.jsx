@@ -202,7 +202,7 @@ const Header = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => handleNavigation(`/user-profile`)}
+                onClick={() => handleNavigation(`/user-profile/${user?._id}`)}
               >
                 <Users /> <span className="ml-2">Profile</span>
               </DropdownMenuItem>

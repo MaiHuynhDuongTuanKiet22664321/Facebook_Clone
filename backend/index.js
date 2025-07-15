@@ -23,7 +23,9 @@ app.use(cors(corsOptions))
 connectDB()
 app.use(passport.initialize())
 
-//api route
+//api route moi them test
+app.use(express.urlencoded({ extended: true }));
+
 app.use('/auth',authRoute)
 app.use('/users',postRoute)
 app.use('/users',userRoute)

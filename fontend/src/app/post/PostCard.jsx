@@ -145,12 +145,10 @@ const PostCard = ({ post, isLiked, onShare, onComment, onLike }) => {
             <div className="flex justify-between mb-2">
               <Button
                 variant="ghost"
-                className={`flex-1 dark:hover:bg-gray-600 ${
-                  isLiked ? "text-blue-500" : ""
-                }`}
+                className={`flex-1 dark:hover:bg-gray-600 ${isLiked ? "text-blue-500" : "text-gray-500 dark:text-gray-400"}`}
                 onClick={onLike}
               >
-                <ThumbsUp className="mr-2 w-4 h-4" /> Like
+                <ThumbsUp className={`mr-2 w-4 h-4 ${isLiked ? "text-blue-500" : "text-gray-500 dark:text-gray-400"}`} /> Like
               </Button>
               <Button
                 variant="ghost"

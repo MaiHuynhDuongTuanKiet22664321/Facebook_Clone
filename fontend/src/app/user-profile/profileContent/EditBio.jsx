@@ -1,90 +1,120 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Save } from "lucide-react";
-import React, { useState } from "react";
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { createOrUpdateUserBio } from '@/service/user.service'
+import { Save } from 'lucide-react'
+import React, { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 
-const EditBio = ({ isOpen, setIsOpen }) => {
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader className='font-semibold text-xl'>Edit bio</DialogHeader>
-        <form>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="bio" className="text-right">
-                Bio
-              </Label>
-              <Textarea id="bioText" name="bioText" className="col-span-3" />
-            </div>
+const EditBio = ({isOpen,onClose,initialData,id,fetchProfile}) => {
+  const {register,handleSubmit,reset,formState:{isSubmitting}} = useForm({
+    defaultValues:initialData,
+  })
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="liveIn" className="text-right">
-                Like In
-              </Label>
-              <Input id="liveIn" name="liveIn" className="col-span-3" />
-            </div>
+  // Reset form mỗi khi initialData đổi
+  useEffect(() => {
+    reset(initialData);
+  }, [initialData, reset]);
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="relationship" className="text-right">
-                Relationship
-              </Label>
-              <Input
-                id="relationship"
-                name="relationship"
-                className="col-span-3"
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="workPace" className="text-right">
-                Work Pace
-              </Label>
-              <Input id="workPace" name="workPace" className="col-span-3" />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="education" className="text-right">
-                Education
-              </Label>
-              <Input id="education" name="education" className="col-span-3" />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">
-                Phone
-              </Label>
-              <Input id="phone" name="phone" className="col-span-3" />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="homeTown" className="text-right">
-                Home Town
-              </Label>
-              <Input id="homeTown" name="homeTown" className="col-span-3" />
-            </div>
-          </div>
-          <DialogFooter>
-              <Button
-                type="submit"
-                className=" text-white bg-blue-500 hover:bg-blue-600 "
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Save Changes
-              </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
+  const handleEditBio = async (data) => {
+  try {
+    await createOrUpdateUserBio(id, data);
+    toast.success('user bio updated successfully');
+    await fetchProfile(); // Lấy lại profile mới nhất
+    onClose();
+  } catch (error) {
+    console.log('error creating or updating user bio', error);
+  }
 };
+  return (
+     <Dialog open={isOpen} onOpenChange={onClose}>
+     <DialogContent className = "sm:max-w-[425px]">
+           <DialogHeader>
+             <DialogTitle>Edit Bio</DialogTitle>
+           </DialogHeader>
+           <form onSubmit={handleSubmit(handleEditBio)}>
+             <div className='grid gap-4 py-4'>
+               <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor="bio" className="text-right">Bio</Label>
+                <Textarea
+                 id='bioText'
+                 className="col-span-3"
+                 {...register("bioText")}
+                />
+               </div>
 
-export default EditBio;
+               <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor="liveIn" className="text-right">Live In</Label>
+                <Input
+                 id='liveIn'
+                 className="col-span-3"
+                 {...register("liveIn")}
+                />
+               </div>
+               <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor="relationShip" className="text-right">RelationShip</Label>
+                <Input
+                 id='relationShip'
+                 {...register("relationShip")}
+                 className="col-span-3"
+                
+                />
+               </div>
+
+               <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor="workPlace" className="text-right">Work Place</Label>
+                <Input
+                 id='workplace'
+                 {...register("workplace")}
+                 className="col-span-3"
+                
+                />
+               </div>
+
+               <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor="education" className="text-right">Education</Label>
+                <Input
+                 id='education'
+                 {...register("education")}
+                 className="col-span-3"
+                
+                />
+               </div>
+
+
+               <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor="phone" className="text-right">Phone</Label>
+                <Input
+                 id='phone'
+                 {...register("phone")}
+                 className="col-span-3"
+                
+                />
+               </div>
+
+
+               <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor="hometown" className="text-right">Hometown</Label>
+                <Input
+                 id='hometown'
+                 {...register("hometown")}
+                 className="col-span-3"
+                
+                />
+               </div>
+             </div>
+             <DialogFooter>
+             <Button type="submit" disabled={isSubmitting} >
+              <Save className="w-4 h-4 mr-2"/>  {isSubmitting ? "Saving..." : "save chnages"}
+                </Button>
+             </DialogFooter>
+           </form>
+     </DialogContent>
+     </Dialog>
+  )
+}
+
+export default EditBio
