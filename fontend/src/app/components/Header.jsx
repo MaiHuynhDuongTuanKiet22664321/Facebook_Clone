@@ -27,42 +27,110 @@ import {
   LogOut,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { toast } from "react-hot-toast";
-import { logout } from "@/service/auth.sevice";
+import React, { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { searchUsers } from "@/service/user.service";
+import debounce from "lodash/debounce";
+import Loader from "@/lib/loader";
 
 const Header = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterUsers, setFilterUsers] = useState([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { theme, setTheme } = useTheme(false);
+  const [loading, setLoading] = useState(false);
+  const searchRef = useRef(null);
+  const { theme, setTheme } = useTheme();
   const { toggleSidebar } = useSidebarStore();
   const router = useRouter();
   const { user, clearUser } = userStore();
 
   const userPlaceholder = user?.username
-    ?.split("")
+    ?.split(" ")
     .map((name) => name[0])
     .join("");
 
   const handleNavigation = (path, item) => {
     router.push(path);
+    // setActiveTab(item); // This line was removed as per the new_code
   };
 
   const handleLogout = async () => {
     try {
-      const result = await logout();
-      if (result?.status == "success") {
-        router.push("/user-login");
-        clearUser();
-      }
+      // const result = await logout(); // This line was removed as per the new_code
+      // if (result?.status == "success") { // This line was removed as per the new_code
+      router.push("/user-login");
+      clearUser();
+      // } // This line was removed as per the new_code
       toast.success("user logged out successfully");
     } catch (error) {
       console.log(error);
       toast.error("failed to log out");
     }
   };
+
+  const debouncedSearch = useRef(
+    debounce(async (query) => {
+      setLoading(true);
+      try {
+        const users = await searchUsers(query);
+        // Loại bỏ user hiện tại khỏi kết quả gợi ý
+        const filtered = user ? users.filter(u => u._id !== user._id) : users;
+        setFilterUsers(filtered);
+        setIsSearchOpen(!!query && filtered.length > 0);
+      } catch (e) {
+        setFilterUsers([]);
+        setIsSearchOpen(false);
+      } finally {
+        setLoading(false);
+      }
+    }, 400)
+  ).current;
+
+  useEffect(() => {
+    if (searchQuery) {
+      debouncedSearch(searchQuery);
+    } else {
+      setFilterUsers([]);
+      setIsSearchOpen(false);
+    }
+    return () => debouncedSearch.cancel();
+  }, [searchQuery, debouncedSearch]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setIsSearchOpen(false);
+  };
+
+  const handleUserClick = async (userId) => {
+    try {
+      setLoading(true);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+      await router.push(`user-profile/${userId}`);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchClose = (e) => {
+    if (!searchRef.current?.contains(e.target)) {
+      setIsSearchOpen(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("click", handleSearchClose);
+    return () => {
+      document.removeEventListener("click", handleSearchClose);
+    };
+  });
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <header className="bg-white dark:bg-[rgb(36,37,38)] text-foreground shadow-md h-16 fixed top-0 left-0 right-0 z-50 p-2">
@@ -76,39 +144,51 @@ const Header = () => {
             onClick={() => handleNavigation("/")}
             className="cursor-pointer"
           />
-          <div className="relative">
-            <form>
+          <div className="relative" ref={searchRef}>
+            <form onSubmit={handleSearchSubmit}>
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
-                  className="pl-8 w-40 md:w-64 bg-gray-100 dark:bg-[rgb(58,59,60)] rounded-full"
-                  placeholder="Search facebook..."
+                  className="pl-8 w-40 md:w-64 h-10 bg-gray-100 dark:bg-[rgb(58,59,60)] rounded-full"
+                  placeholder="search facebook.."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchOpen(true)}
                 />
               </div>
               {isSearchOpen && (
                 <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-lg mt-1 z-50">
                   <div className="p-2">
-                    <div className="flex items-center space-x-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer">
-                      <Search className="absolute text-sm text-gray-400 " />
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-10 w-10">
-                          {user?.profilePicture ? (
-                            <AvatarImage
-                              src={user?.profilePicture}
-                              alt={user?.username}
-                            />
-                          ) : (
-                            <AvatarFallback>{userPlaceholder}</AvatarFallback>
-                          )}
-                        </Avatar>
-                        <span
-                          className="font-semibold truncate max-w-[200px] block"
-                          title={user?.username}
+                    {filterUsers.length > 0 ? (
+                      filterUsers.map((user) => (
+                        <div
+                          className="flex items-center space-x-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
+                          key={user._id}
+                          onClick={() => handleUserClick(user?._id)}
                         >
-                          {user?.username}
-                        </span>
-                      </div>
-                    </div>
+                          <Search className="absolute text-sm  text-gray-400 " />
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-8 w-8">
+                              {user?.profilePicture ? (
+                                <AvatarImage
+                                  src={user?.profilePicture}
+                                  alt={user?.username}
+                                />
+                              ) : (
+                                <AvatarFallback>
+                                  {userPlaceholder}
+                                </AvatarFallback>
+                              )}
+                            </Avatar>
+                            <span>{user?.username}</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <div className="p-2 text-gray-500">No user Found</div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
