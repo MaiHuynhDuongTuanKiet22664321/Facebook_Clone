@@ -21,6 +21,7 @@ import EditBio from "./profileContent/EditBio";
 import { usePostStore } from "@/store/usePostStore";
 import { formatDateInDDMMYYY } from "@/lib/utils";
 import toast from "react-hot-toast";
+import userStore from "@/store/userStore";
 
 const ProfileDetails = ({
   activeTab,
@@ -30,7 +31,8 @@ const ProfileDetails = ({
   fetchProfile,
 }) => {
   const [isEditBioModel, setIsEditBioModel] = useState(false);
-  const [likePosts, setLikePosts] = useState(new Set());
+  const { user } = userStore();
+  const currentUserId = user?._id;
   const {
     userPosts,
     fetchUserPost,
@@ -46,29 +48,10 @@ const ProfileDetails = ({
     }
   }, [id, fetchUserPost]);
 
-  useEffect(() => {
-    // Xóa toàn bộ logic lấy/trả trạng thái like từ localStorage.
-  }, []);
-
   const handleLike = async (postId) => {
-    // Xóa toàn bộ logic lấy/trả trạng thái like từ localStorage.
-    // const updatedLikePost = new Set(likePosts);
-    // if (updatedLikePost.has(postId)) {
-    //   updatedLikePost.delete(postId);
-    //   toast.error("post disliked successfully");
-    // } else {
-    //   updatedLikePost.add(postId);
-    //   toast.success("post like successfully");
-    // }
-    // setLikePosts(updatedLikePost);
-    // localStorage.setItem(
-    //   "likePosts",
-    //   JSON.stringify(Array.from(updatedLikePost))
-    // );
-
     try {
       await handleLikePost(postId);
-      await fetchPost();
+      await fetchUserPost(id); // fetch lại post của user profile
     } catch (error) {
       console.error(error);
       toast.error("failed to like or unlike the post");
@@ -79,11 +62,11 @@ const ProfileDetails = ({
     posts: (
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-[70%] space-y-6">
-          {userPosts?.map((post) => (
+          {user && userPosts?.map((post) => (
             <PostsContent
               key={post?._id}
               post={post}
-              isLiked={post.likes.includes(id)}
+              isLiked={post.likes && post.likes.includes(user._id)}
               onLike={() => handleLike(post?._id)}
               onComment={async (comment) => {
                 await handleCommentPost(post?._id, comment.text);

@@ -8,35 +8,18 @@ import NewPostForm from '../post/NewPostForm'
 import PostCard from '../post/PostCard'
 import { usePostStore } from '@/store/usePostStore'
 import toast from 'react-hot-toast'
+import userStore from "@/store/userStore";
 
 const HomePage = () => {
   const [isPostFormOpen, setIsPostFormOpen] = useState(false)
-  const [likePosts,setLikePosts] = useState(new Set());
+  const { user } = userStore();
+  const currentUserId = user?._id;
   const {posts,story,fetchPost,fetchUserPost,fetchStoryPost,handleCreatePost,handleCreateStory,handleLikePost,handleCommentPost,handleSharePost} = usePostStore();
   useEffect(() =>{
     fetchPost()
   },[fetchPost])
 
-  useEffect(() =>{
-    const saveLikes = localStorage.getItem('likePosts');
-    if(saveLikes){
-      setLikePosts(new Set(JSON.parse(saveLikes)));
-    }
-  },[]);
-
-
   const handleLike = async(postId)=>{
-    const updatedLikePost = new Set(likePosts);
-    if(updatedLikePost.has(postId)){
-      updatedLikePost.delete(postId);
-      toast.error('post disliked successfully')
-    }else {
-      updatedLikePost.add(postId)
-      toast.success('post like successfully')
-    }
-    setLikePosts(updatedLikePost);
-    localStorage.setItem('likePosts',JSON.stringify(Array.from(updatedLikePost)))
-
     try {
       await handleLikePost(postId);
       await fetchPost();
@@ -60,7 +43,7 @@ const HomePage = () => {
             {posts.map((post, index) => (
               <PostCard key={post._id} 
                   post={post}
-                  isLiked = {likePosts.has(post?._id)}
+                  isLiked = {post.likes.includes(currentUserId)}
                   onLike={() => handleLike(post?._id)}
                   onComment={async(comment) => {
                     await handleCommentPost(post?._id,comment.text);
