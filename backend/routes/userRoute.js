@@ -5,7 +5,7 @@ const {
   unFollowUser,
   deleteUserFormRequest,
   getAllFriendRequest,
-  getAllMutualFriend,
+  getAllMutualFriends,
   getAllUserForRequest,
   getAllUsers,
   checkAuthenticated,
@@ -34,7 +34,7 @@ router.post("/friend-request/remove", authMiddleware, deleteUserFormRequest);
 router.get("/friend-request", authMiddleware, getAllFriendRequest);
 
 // get all mutual friend
-router.get("/mutual-friends", authMiddleware, getAllMutualFriend);
+router.get("/mutual-friends/:userId", authMiddleware, getAllMutualFriends);
 
 // get all user for request
 router.get("/user-to-request", authMiddleware, getAllUserForRequest);

@@ -12,10 +12,12 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, UserX } from "lucide-react";
 import { userFriendStore } from "@/store/userFriendStore";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 
 const MutualFriends = ({ id, isOwner }) => {
   const { fetchMutualFriends, mutualFriends, UnfollowUser } = userFriendStore();
+  const router = useRouter();
   useEffect(() => {
     if (id) {
       fetchMutualFriends(id);
@@ -46,14 +48,17 @@ const MutualFriends = ({ id, isOwner }) => {
                 className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-start justify-between"
               >
                 <div className="flex items-center space-x-4">
-                  <Avatar>
+                  <Avatar className='w-10 h-10 cursor-pointer'
+                  onClick={() => router.push(`/user-profile/${friend?._id}`)}
+                  >
                     {friend?.profilePicture ? (
                       <AvatarImage
                         src={friend?.profilePicture}
                         alt={friend?.username}
+                        className='bg-gray-200 dark:bg-gray-400'
                       />
                     ) : (
-                      <AvatarFallback className="dark:bg-gray-400">
+                      <AvatarFallback className="bg-gray-200 dark:bg-gray-400">
                         {friend?.username
                           ?.split(" ")
                           .map((name) => name[0])
@@ -62,7 +67,7 @@ const MutualFriends = ({ id, isOwner }) => {
                     )}
                   </Avatar>
                   <div>
-                    <p className="font-semibold dark:text-gray-100">
+                    <p className="font-semibold dark:text-gray-100 cursor-pointer" onClick={() => router.push(`/user-profile/${friend?._id}`)}>
                       {friend?.username}
                     </p>
                     <p className="text-sm text-gray-400">

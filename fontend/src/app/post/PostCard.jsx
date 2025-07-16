@@ -22,11 +22,13 @@ import {
 } from "@/components/ui/dialog";
 import PostComments from "./PostComments";
 import { formateDate } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const PostCard = ({ post, isLiked, onShare, onComment, onLike }) => {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const commentInputRef = useRef(null);
+  const router = useRouter();
 
   const handleCommentClick = () => {
     setShowComments(!showComments);
@@ -80,7 +82,10 @@ const PostCard = ({ post, isLiked, onShare, onComment, onLike }) => {
         <Card>
           <CardContent className="dark:text-white">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3 cursor-pointer">
+              <div
+                className="flex items-center space-x-3 cursor-pointer"
+                onClick={() => router.push(`/user-profile/${post?.user?._id}`)}
+              >
                 <Avatar className="w-10 h-10">
                   {post?.user?.profilePicture ? (
                     <AvatarImage
