@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { logout } from "@/service/auth.sevice";
 import useSidebarStore from "@/store/sidebarStore";
+import { userFriendStore } from "@/store/userFriendStore";
 import userStore from "@/store/userStore";
 import {
   Bell,
@@ -23,6 +24,7 @@ const LeftSideBar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebarStore();
   const router = useRouter();
   const { user, clearUser } = userStore();
+  const {friendRequest} = userFriendStore();
 
   const userPlaceholder = user?.username
     ?.split("")
@@ -92,7 +94,7 @@ const LeftSideBar = () => {
             onClick={() => handleNavigation("/friends-list")}
           >
             <User2Icon className="mr-4" />
-            Friends
+            Friends {friendRequest?.length > 0 && <span className="w-5 h-5 flex items-center justify-center text-xs text-gray-600 rounded-md bg-red-500 ">{friendRequest?.length}</span>}
           </Button>
 
           <Button

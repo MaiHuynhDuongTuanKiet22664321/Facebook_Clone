@@ -120,9 +120,3 @@ export const getAllUsers = async() =>{
     }
 }
 
-export const searchUsers = async (query) => {
-    if (!query) return [];
-    const response = await axiosInstance.get(`/users/search?query=${encodeURIComponent(query)}`);
-    console.log("searchUsers response:", response.data);
-    return response.data;
-};
