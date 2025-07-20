@@ -118,7 +118,8 @@ const LeftSideBar = () => {
           <Button
             variant="ghost"
             className="w-full justify-start py-3 px-2 hover:bg-gray-200"
-            onClick={() => handleNavigation("/message")}
+            // onClick={() => handleNavigation("/message")}
+            onClick={() => {MessageCircle, toast.error("Coming soon...")}}
           >
             <MessageCircle className="mr-4" />
             Message
@@ -127,7 +128,8 @@ const LeftSideBar = () => {
           <Button
             variant="ghost"
             className="w-full justify-start py-3 px-2 hover:bg-gray-200"
-            onClick={() => handleNavigation("/notification")}
+            // onClick={() => handleNavigation("/notification")}
+            onClick={() => {MessageCircle, toast.error("Coming soon...")}}
           >
             <Bell className="mr-4" />
             Notification

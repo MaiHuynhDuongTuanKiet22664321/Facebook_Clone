@@ -173,14 +173,16 @@ const Header = () => {
                                 alt={user.username}
                               />
                             ) : (
-                              <AvatarFallback>{user.username[0]}</AvatarFallback>
+                              <AvatarFallback>
+                                {user.username[0]}
+                              </AvatarFallback>
                             )}
                           </Avatar>
                           <span>{user.username}</span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-gray-500">Không tìm thấy người dùng</div>
+                      <div className="text-gray-500">Not found any user</div>
                     )}
                   </div>
                 </div>
@@ -191,19 +193,21 @@ const Header = () => {
 
         {/* Middle Navigation */}
         <nav className="hidden md:flex justify-around w-[40%] max-w-md">
-          {[{ icon: Home, path: "/" }, { icon: Video, path: "/video-feed" }, { icon: User, path: "/friends-list" }].map(
-            ({ icon: Icon, path }) => (
-              <Button
-                key={path}
-                variant="ghost"
-                size="icon"
-                className="text-gray-400 hover:text-blue-600"
-                onClick={() => handleNavigation(path)}
-              >
-                <Icon />
-              </Button>
-            )
-          )}
+          {[
+            { icon: Home, path: "/" },
+            { icon: Video, path: "/video-feed" },
+            { icon: User, path: "/friends-list" },
+          ].map(({ icon: Icon, path }) => (
+            <Button
+              key={path}
+              variant="ghost"
+              size="icon"
+              className="text-gray-400 hover:text-blue-600"
+              onClick={() => handleNavigation(path)}
+            >
+              <Icon />
+            </Button>
+          ))}
         </nav>
 
         {/* Right Controls */}
@@ -217,11 +221,15 @@ const Header = () => {
             <Menu />
           </Button>
 
-          <Button variant="ghost" size="icon" className="hidden md:block">
+          <Button variant="ghost" size="icon" className="hidden md:block"
+          onClick={() => {MessageCircle, toast.error("Coming soon...")}}
+          >
             <Bell />
           </Button>
 
-          <Button variant="ghost" size="icon" className="hidden md:block">
+          <Button variant="ghost" size="icon" className="hidden md:block"
+          onClick={() => {MessageCircle, toast.error("Coming soon...")}}
+          >
             <MessageCircle />
           </Button>
 
@@ -229,7 +237,10 @@ const Header = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar>
-                  <AvatarImage src={user?.profilePicture} alt={user?.username} />
+                  <AvatarImage
+                    src={user?.profilePicture}
+                    alt={user?.username}
+                  />
                   <AvatarFallback className="bg-gray-200 dark:bg-gray-400">
                     {userPlaceholder}
                   </AvatarFallback>
@@ -241,7 +252,10 @@ const Header = () => {
                 <div className="flex items-center">
                   <Avatar className="h-8 w-8 mr-2">
                     {user?.profilePicture ? (
-                      <AvatarImage src={user?.profilePicture} alt={user?.username} />
+                      <AvatarImage
+                        src={user?.profilePicture}
+                        alt={user?.username}
+                      />
                     ) : (
                       <AvatarFallback className="dark:bg-gray-400">
                         {userPlaceholder}
@@ -255,26 +269,35 @@ const Header = () => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleNavigation(`/user-profile/${user?._id}`)}>
-                <Users className="mr-2" /> Hồ sơ
+              <DropdownMenuItem
+                onClick={() => handleNavigation(`/user-profile/${user?._id}`)}
+              >
+                <Users className="mr-2" /> Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleNavigation("/messages")}>
-                <MessageCircle className="mr-2" /> Tin nhắn
+              <DropdownMenuItem
+                // onClick={() => handleNavigation("/messages")}
+                onClick={() => {
+                  MessageCircle, toast.error("Coming soon...");
+                }}
+              >
+                <MessageCircle className="mr-2" /> Messager
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+              <DropdownMenuItem
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
                 {theme === "light" ? (
                   <>
-                    <Moon className="mr-2" /> Chế độ tối
+                    <Moon className="mr-2" /> Mode dark
                   </>
                 ) : (
                   <>
-                    <Sun className="mr-2" /> Chế độ sáng
+                    <Sun className="mr-2" /> Mode light
                   </>
                 )}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>
-                <LogOutIcon className="mr-2" /> Đăng xuất
+                <LogOutIcon className="mr-2" /> Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

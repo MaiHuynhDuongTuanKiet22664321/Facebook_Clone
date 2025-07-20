@@ -23,7 +23,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { loginUser, registerUser } from "@/service/auth.sevice";
 import toast from "react-hot-toast";
 
-const page = () => {
+const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -408,4 +408,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
