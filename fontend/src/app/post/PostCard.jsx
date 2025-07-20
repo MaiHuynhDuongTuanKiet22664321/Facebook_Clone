@@ -111,6 +111,7 @@ const PostCard = ({ post, isLiked, onShare, onComment, onLike }) => {
                 <MoreHorizontal className="dark:text-white w-4 h-4" />
               </Button>
             </div>
+            <p className="mb-4">{post?.content}</p>
             {post?.mediaUrl && post?.mediaType === "image" && (
               <img
                 src={post?.mediaUrl}

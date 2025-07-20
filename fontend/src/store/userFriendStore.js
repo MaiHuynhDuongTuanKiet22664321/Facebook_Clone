@@ -66,9 +66,15 @@ export const userFriendStore = create((set,get) => ({
     set({loading:true})
     try {
         await deleteUserFromRequest(userId)
-        toast.success("you have deleted friend successfully")
+        toast.success("Bạn đã xóa lời mời kết bạn thành công")
+        // Cập nhật lại danh sách
+        await get().fetchFriendRequest();
+        await get().fetchMutualFriends(userId); // Nếu cần cập nhật bạn chung
     } catch (error) {
+      toast.error("Có lỗi xảy ra khi xóa lời mời kết bạn");
       set({error, loading:false})
+    } finally {
+      set({loading:false})
     }
    }
 

@@ -42,6 +42,8 @@ const followUser = async (req, res) => {
 };
 
 // Unfollow a user
+// controllers/userController.js
+
 const unFollowUser = async (req, res) => {
   const { userIdToUnFollow } = req.body;
   const userId = req?.user?.userId;
@@ -52,8 +54,10 @@ const unFollowUser = async (req, res) => {
   }
 
   try {
-    const userToUnFollow = await User.findById(userIdToUnFollow);
-    const currentUser = await User.findById(userId);
+    const [userToUnFollow, currentUser] = await Promise.all([
+      User.findById(userIdToUnFollow),
+      User.findById(userId),
+    ]);
 
     // Check if both users exist
     if (!userToUnFollow || !currentUser) {
@@ -61,29 +65,41 @@ const unFollowUser = async (req, res) => {
     }
 
     // Check if not following
-    if (!currentUser.following.includes(userIdToUnFollow)) {
+    const isFollowing = currentUser.following.some(
+      (id) => id.toString() === userIdToUnFollow
+    );
+    if (!isFollowing) {
       return response(res, 400, "You are not following this user");
     }
 
+    // Remove from following/followers
     currentUser.following = currentUser.following.filter(
-      id => id.toString() !== userIdToUnFollow
+      (id) => id.toString() !== userIdToUnFollow
     );
     userToUnFollow.followers = userToUnFollow.followers.filter(
-      id => id.toString() !== userId
+      (id) => id.toString() !== userId
     );
 
-    currentUser.followingCount = Math.max(currentUser.followingCount - 1, 0);
-    userToUnFollow.followerCount = Math.max(userToUnFollow.followerCount - 1, 0);
+    // Update count fields safely
+    currentUser.followingCount = Math.max(
+      (currentUser.following?.length || 0),
+      0
+    );
+    userToUnFollow.followerCount = Math.max(
+      (userToUnFollow.followers?.length || 0),
+      0
+    );
 
-    await currentUser.save();
-    await userToUnFollow.save();
+    await Promise.all([currentUser.save(), userToUnFollow.save()]);
 
     return response(res, 200, "User unfollowed successfully");
   } catch (error) {
-    console.log("Error in unFollowUser:", error);
+    console.error("Error in unFollowUser:", error);
     return response(res, 500, "Internal server error", error.message);
   }
 };
+
+
 
 // Remove a friend request
 const deleteUserFormRequest = async (req, res) => {
@@ -127,60 +143,60 @@ const deleteUserFormRequest = async (req, res) => {
   }
 };
 
-// Get all friend requests (users following you but not followed back)
-const getAllFriendRequest = async (req, res) => {
-  try {
-    const loggedInUserId = req?.user?.userId;
-    const loggedInUser = await User.findById(loggedInUserId).select('followers following');
-    if (!loggedInUser) {
-      return response(res, 404, "User not found");
+//get all frined request fro user
+const getAllFriendRequest  = async (req, res) => {
+    try {
+         const loggedInUserId = req.user.userId;
+
+         //find the logged in user and retrive their followers and following
+
+         const loggedInUser = await User.findById(loggedInUserId).select('followers following')
+         if(!loggedInUser){
+            return response(res, 404, 'User not found')
+         }
+
+         //find user who follow the logged in user but are not followed back
+          const userToFollowBack = await User.find({
+            _id:{
+                $in:loggedInUser.followers, //user who follow the logged in user
+                $nin: loggedInUser.following // exclued users the logged in user already follow back
+            }
+          }).select('username profilePicture email followerCount');
+
+          return response(res,200, 'user to follow back get successfully',userToFollowBack)
+
+    } catch (error) {
+        return response(res, 500, 'Internal server error', error.message)
     }
+}
 
-    const userToFollowBack = await User.find({
-      _id: {
-        $in: loggedInUser.followers,
-        $nin: loggedInUser.following,
-      },
-    }).select("username profilePicture email followerCount");
 
-    return response(res, 200, "Friend requests fetched successfully", userToFollowBack);
-  } catch (error) {
-    console.log("Error in getAllFriendRequest:", error);
-    return response(res, 500, "Internal server error", error.message);
-  }
-};
-
-// Get all users that the current user has no connection with
+//get all frined request fro user
 const getAllUserForRequest = async (req, res) => {
-  try {
-    const loggedInUserId = req?.user?.userId;
+    try {
+         const loggedInUserId = req.user.userId;
 
-    const loggedInUser = await User.findById(loggedInUserId).select("followers following");
-    if (!loggedInUser) {
-      return response(res, 404, "User not found");
+         //find the logged in user and retrive their followers and following
+
+         const loggedInUser = await User.findById(loggedInUserId).select('followers following')
+         if(!loggedInUser){
+            return response(res, 404, 'User not found')
+         }
+
+         //find user who  neither followers not following of the login user
+          const userForFriendRequest = await User.find({
+            _id:{
+                $ne:loggedInUser, //user who follow the logged in user
+                $nin: [...loggedInUser.following, ...loggedInUser.followers]// exclued both
+            }
+          }).select('username profilePicture email followerCount');
+
+          return response(res,200, 'user for frined request get successfully ',userForFriendRequest)
+
+    } catch (error) {
+        return response(res, 500, 'Internal server error', error.message)
     }
-
-    const excludedIds = [
-      ...loggedInUser.followers,
-      ...loggedInUser.following,
-      loggedInUserId,
-    ];
-
-    const userForFriendRequest = await User.find({
-      _id: { $nin: excludedIds },
-    }).select("username profilePicture email followerCount");
-
-    return response(
-      res,
-      200,
-      "Users available for friend request fetched successfully",
-      userForFriendRequest
-    );
-  } catch (error) {
-    console.log("Error in getAllUserForRequest:", error);
-    return response(res, 500, "Internal server error", error.message);
-  }
-};
+}
 
 // Get mutual friends
 const getAllMutualFriends = async (req, res) => {

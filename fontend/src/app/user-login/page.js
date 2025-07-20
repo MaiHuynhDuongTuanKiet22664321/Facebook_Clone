@@ -98,20 +98,22 @@ const page = () => {
   },[resetLoginForm,resetSignUpForm])
 
 
-  const onSubmitLogin = async(data) =>{
+  const onSubmitLogin = async (data) => {
     try {
-       const result = await loginUser(data)
-        if(result.status === 'success'){
-          router.push('/')
-        }
-        toast.success('User login successfully')
+      const result = await loginUser(data);
+      if (result && result.status === 'success') {
+        router.push('/');
+        toast.success('User login successfully');
+      } else {
+        toast.error('invalid email or password');
+      }
     } catch (error) {
       console.error(error);
-      toast.error('invalid email or password')
-    }finally{
+      toast.error('invalid email or password');
+    } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleLogin = () =>{
     window.location.href= `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`

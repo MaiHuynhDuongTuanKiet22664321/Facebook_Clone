@@ -37,6 +37,7 @@ const Page = () => {
       fetchFriendSuggestion();
     } else if (action === "delete") {
       await UnfollowUser(userId);
+      deleteUserFromRequest(userId)
       fetchFriendRequest();
       fetchFriendSuggestion();
     }

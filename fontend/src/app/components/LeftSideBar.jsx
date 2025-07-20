@@ -60,7 +60,7 @@ const LeftSideBar = () => {
       <div className="flex flex-col h-full overflow-y-auto">
         {/* navigation menu  */}
         <nav className="space-y-6 flex-grow">
-          <div className="flex items-center space-x-3 mb-6 cursor-pointer">
+          <div className="flex items-center space-x-3 mb-6 cursor-pointer" onClick={() => router.push(`/user-profile/${user?._id}`)}>
             <Avatar className="h-8 w-8">
               {user?.profilePicture ? (
                 <AvatarImage src={user?.profilePicture} alt={user?.username} />
@@ -135,7 +135,7 @@ const LeftSideBar = () => {
         {/* footer section */}
         <div className="mb-16">
           <Separator className="my-4" />
-          <div className="flex items-center space-x-2 mb-4 cursor-pointer">
+          <div className="flex items-center space-x-2 mb-4 cursor-pointer" onClick={() => router.push(`/user-profile/${user?._id}`)}>
             <Avatar className="h-8 w-8">
               {user?.profilePicture ? (
                 <AvatarImage src={user?.profilePicture} alt={user?.username} />
