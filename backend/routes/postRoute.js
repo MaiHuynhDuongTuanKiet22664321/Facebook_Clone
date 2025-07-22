@@ -1,7 +1,17 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const { multerMiddleware } = require('../config/cloudinary');
-const { createPost, getAllPosts, getPostByUserId, likePost, sharePost, addCommentToPost, getAllStory, createStory } = require('../controllers/postController');
+const { 
+    createPost, 
+    getAllPosts, 
+    getPostByUserId, 
+    likePost, 
+    sharePost, 
+    addCommentToPost, 
+    getAllStory, 
+    createStory,
+    getPostsByUserIds
+} = require('../controllers/postController');
 const router = express.Router();
 
 
@@ -33,6 +43,10 @@ router.post('/story',authMiddleware,multerMiddleware.single('media'),createStory
 
 //get all story
 router.get('/story',authMiddleware,getAllStory)
+
+//get posts by user ids
+router.post('/posts/userIds',authMiddleware,getPostsByUserIds)
+
 
 
 module.exports = router;

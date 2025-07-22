@@ -5,6 +5,8 @@ import { ThemeProvider } from "next-themes";
 import AuthWrapper from "./auth-wrapper";
 import { Toaster } from "react-hot-toast";
 
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,10 +29,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster/>
-        <ThemeProvider attribute="class">
-          <AuthWrapper>{children}</AuthWrapper>
-        </ThemeProvider>
-        
+          <ThemeProvider attribute="class">
+            <AuthWrapper>{children}</AuthWrapper>
+          </ThemeProvider>       
       </body>
     </html>
   );

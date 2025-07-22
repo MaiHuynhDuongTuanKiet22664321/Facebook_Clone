@@ -221,7 +221,7 @@ const ProfileDetails = ({
         isOpen={isEditBioModel}
         onClose={() => setIsEditBioModel(false)}
         fetchProfile={fetchProfile}
-        initialData={profileData?.bio}
+        initialData={typeof profileData?.bio === 'object' ? profileData?.bio : {}}
         id={id}
       ></EditBio>
     </div>

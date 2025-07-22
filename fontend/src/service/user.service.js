@@ -100,15 +100,14 @@ export const updateUserCoverPhoto = async(userId,updateData) =>{
 }
 
 
-export const createOrUpdateUserBio = async(userId,bioData) =>{
-    try {
-         const response = await axiosInstance.put(`/users/bio/${userId}`,bioData)
-         return response?.data?.data;
-    } catch (error) {
-        console.log(error);
-        throw error;   
-    }
-}
+export const createOrUpdateUserBio = async (userId, data) => {
+  try {
+    const response = await axiosInstance.post(`/users/bio/${userId}`, data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const getAllUsers = async() =>{
     try {

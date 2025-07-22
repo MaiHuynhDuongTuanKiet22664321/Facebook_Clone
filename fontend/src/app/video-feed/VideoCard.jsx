@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import userStore from "@/store/userStore";
 import { formateDate } from "@/lib/utils";
 import { comment } from "postcss";
+import { useRouter } from "next/navigation";
 
 const VideoCard = ({ post, isLiked, onShare, onComment, onLike }) => {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -25,6 +26,8 @@ const VideoCard = ({ post, isLiked, onShare, onComment, onLike }) => {
   const {user} = userStore()
   const [commentText, setCommentText] = useState("");
   const commentInputRef = useRef(null)
+  const router = useRouter();
+
 
   const handleCommentClick = () =>{
     setShowComments(!showComments);
@@ -82,6 +85,7 @@ const VideoCard = ({ post, isLiked, onShare, onComment, onLike }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="bg-white dark:bg-[rgb(36,37,38)] rounded-lg shadow-lg overflow-hidden mb-4"
+      onClick={() => router.push(`/user-profile/${post?.user?._id}`)}
     >
       <div>
         <div className="flex items-center justify-between mb-4 px-4 mt-2 ">

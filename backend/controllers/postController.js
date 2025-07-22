@@ -2,6 +2,7 @@ const { uploadFileToCloudinary } = require("../config/cloudinary");
 const Post = require("../model/Post");
 const Story = require("../model/story");
 const response = require("../utils/responseHandler");
+const User = require("../model/User");
 
 
 
@@ -222,9 +223,26 @@ const sharePost = async(req, res) => {
 }
 
 
+// Get posts by array of userIds
+const getPostsByUserIds = async (req, res) => {
+  const { userIds } = req.body; // expect: ["id1", "id2", ...]
 
+  if (!Array.isArray(userIds) || userIds.length === 0) {
+    return response(res, 400, 'userIds must be a non-empty array');
+  }
 
+  try {
+    const posts = await Post.find({ user: { $in: userIds } })
+      .sort({ createdAt: -1 })
+      .select('content mediaType createdAt') // 👈 chỉ lấy 3 trường này
+      .populate('user', 'username profilePicture');
 
+    return response(res, 200, 'Posts from specified users retrieved successfully', posts);
+  } catch (error) {
+    console.error(error);
+    return response(res, 500, 'Internal server error', error.message);
+  }
+};
 
 
 module.exports= {
@@ -235,5 +253,6 @@ module.exports= {
     addCommentToPost,
     sharePost,
     createStory,
-    getAllStory
+    getAllStory,
+    getPostsByUserIds
 }

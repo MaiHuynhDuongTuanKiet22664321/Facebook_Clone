@@ -42,7 +42,7 @@ const followUser = async (req, res) => {
 };
 
 // Unfollow a user
-// controllers/userController.js
+
 
 const unFollowUser = async (req, res) => {
   const { userIdToUnFollow } = req.body;

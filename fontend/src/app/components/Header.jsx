@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Loader from "@/lib/loader";
+import { userFriendStore } from "@/store/userFriendStore";
+import NotificationHeaderCard from "@/app/notification/NotificationHeaderCard";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,6 +50,20 @@ const Header = () => {
   const { toggleSidebar } = useSidebarStore();
   const { user, clearUser } = userStore();
   const router = useRouter();
+
+  const { fetchInformationPostMutualFriends, informationPostMutualFriends, currentUserId, setCurrentUserId } = userFriendStore();
+
+  useEffect(() => {
+    if (user?._id) {
+      setCurrentUserId(user._id);
+    }
+  }, [user, setCurrentUserId]);
+
+  useEffect(() => {
+    if (currentUserId) {
+      fetchInformationPostMutualFriends(currentUserId);
+    }
+  }, [currentUserId, fetchInformationPostMutualFriends]);
 
   const userPlaceholder = user?.username
     ?.split(" ")
@@ -221,11 +237,34 @@ const Header = () => {
             <Menu />
           </Button>
 
-          <Button variant="ghost" size="icon" className="hidden md:block"
-          onClick={() => {MessageCircle, toast.error("Coming soon...")}}
-          >
-            <Bell />
-          </Button>
+          {/* Bell Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="hidden md:block">
+                <Bell />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-80 z-45 max-h-96 overflow-y-auto" align="end">
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex items-center">
+                  <Bell className="mr-2" />
+                  <div>
+                    <p className="text-sm font-medium">Thông báo</p>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {Array.isArray(informationPostMutualFriends) && informationPostMutualFriends.length > 0 ? (
+                informationPostMutualFriends.map((item, idx) => (
+                  <DropdownMenuItem key={idx} className="p-0 hover:bg-transparent cursor-default">
+                    <NotificationHeaderCard user={item.user} content={item.content} createdAt={item.createdAt} />
+                  </DropdownMenuItem>
+                ))
+              ) : (
+                <div className="text-center text-gray-500 py-4 text-sm">Bạn chưa có thông báo mới</div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Button variant="ghost" size="icon" className="hidden md:block"
           onClick={() => {MessageCircle, toast.error("Coming soon...")}}

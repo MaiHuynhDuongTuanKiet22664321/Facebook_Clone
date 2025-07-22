@@ -128,4 +128,7 @@ export const usePostStore = create((set) => ({
       toast.error('failed to share this post')
     }
   },
+
+
+  
 }));

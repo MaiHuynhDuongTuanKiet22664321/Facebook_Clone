@@ -63,7 +63,6 @@ export const likePost = async(postId) =>{
 export const commentsPost = async(postId,comment) =>{
     try {
          const result = await  axiosInstance.post(`/posts/posts/comments/${postId}`,comment)
-         console.log('Result',result?.data?.data)
          return result?.data?.data;
          
     } catch (error) {
@@ -94,3 +93,15 @@ export const getAllUserPosts = async(userId)=>{
         throw error;
     }
 }
+
+
+export const getPostsByUserIds = async (userIds) => {
+  try {
+    const result = await axiosInstance.post('/posts/posts/userIds', { userIds }); 
+    return result?.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+

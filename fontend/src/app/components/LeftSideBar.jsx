@@ -21,7 +21,7 @@ import React from "react";
 import toast from "react-hot-toast";
 
 const LeftSideBar = () => {
-  const { isSidebarOpen, toggleSidebar } = useSidebarStore();
+  const { isSidebarOpen, toggleSidebar, setSidebarOpen } = useSidebarStore();
   const router = useRouter();
   const { user, clearUser } = userStore();
   const {friendRequest} = userFriendStore();
@@ -50,6 +50,15 @@ const LeftSideBar = () => {
       toast.error("failed to log out");
     }
   };
+
+  // Ẩn sidebar khi thay đổi kích thước màn hình
+  React.useEffect(() => {
+    const handleResize = () => {
+      setSidebarOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [setSidebarOpen]);
 
   return (
     <aside
@@ -128,8 +137,8 @@ const LeftSideBar = () => {
           <Button
             variant="ghost"
             className="w-full justify-start py-3 px-2 hover:bg-gray-200"
-            // onClick={() => handleNavigation("/notification")}
-            onClick={() => {MessageCircle, toast.error("Coming soon...")}}
+            onClick={() => handleNavigation("/notification")}
+            // onClick={() => {MessageCircle, toast.error("Coming soon...")}}
           >
             <Bell className="mr-4" />
             Notification
